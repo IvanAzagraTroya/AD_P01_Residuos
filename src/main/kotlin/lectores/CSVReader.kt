@@ -1,6 +1,8 @@
 package lectores
 
+import model.Contenedor
 import model.Residuos
+import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
 
@@ -60,6 +62,50 @@ object CSVReader {
             "PILAS" -> TipoResiduo.PILAS
             "ANIMALES MUERTOS" -> TipoResiduo.ANIMALES_MUERTOS
             else -> TipoResiduo.RESIDUOS_DEPOSITADOS_EN_MIGAS_CALIENTES
+        }
+    }
+
+    /**
+     * @author Iván Azagra
+     * Lee el csv de residuos para devolver la lista de contenedores
+     */
+    fun readCSVContenedores(): List<Contenedor> {
+        val results = mutableListOf<Contenedor>()
+        val csvFile = "data${File.separator}contenedores_varios.csv"
+
+        if (!File(csvFile).exists()) {
+            throw IllegalArgumentException("Contenedores csv file not found")
+        }
+        val lines = File(csvFile).readLines().drop(1)
+        lines.forEach { line ->
+            val arguments = line.split(";")
+            val contenedor = Contenedor(
+                codigoSituad = arguments[0],
+                tipoContenedor = parseTipoContenedor(arguments[1]),
+                modelo = arguments[2],
+                descripcionModelo = arguments[3],
+                cantidad = (arguments[4]).toInt(),
+                lote = arguments[5].toInt(),
+                distrito = arguments[6],
+                barrio = arguments[7],
+                tipoVia = arguments[8],
+                nombreCalle = arguments[9],
+                numero = arguments[10],
+                direccion = arguments[15]
+            )
+            results.add(contenedor)
+        }
+        return results
+    }
+
+    private fun parseTipoContenedor(c: String): TipoContenedor {
+        return when (c) {
+            "ORGANICA" -> TipoContenedor.ORGANICA
+            "RESTO" -> TipoContenedor.RESTO
+            "ENVASES" -> TipoContenedor.ENVASES
+            "VIDRIO" -> TipoContenedor.VIDRIO
+            "PAPEL-CARTON" -> TipoContenedor.PAPEL_Y_CARTON
+            else -> TipoContenedor.UNKNOWN
         }
     }
 }

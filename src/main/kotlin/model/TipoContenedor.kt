@@ -1,5 +1,5 @@
 package model
 
 enum class TipoContenedor {
-    ORGÁNICA, RESTO, ENVASES, VIDRIO, PAPEL_Y_CARTÓN
+    ORGANICA, RESTO, ENVASES, VIDRIO, PAPEL_Y_CARTON, UNKNOWN
 }
