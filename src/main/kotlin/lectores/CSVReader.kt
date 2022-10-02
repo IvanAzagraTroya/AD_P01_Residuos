@@ -16,9 +16,9 @@ object CSVReader {
      * @author Daniel Rodriguez
      * Este metodo coge el CSV de residuos y devuelve una lista no mutable de objetos Residuos
      */
-    fun readCSVResiduos() : List<Residuos> {
+    fun readCSVResiduos(csvName: String) : List<Residuos> {
         val results = mutableListOf<Residuos>()
-        val csvName = "data${File.separator}modelo_residuos_2021.csv"
+        //val csvName = "data${File.separator}modelo_residuos_2021.csv"
 
         if(!File(csvName).exists()) {
             throw IllegalArgumentException("File $csvName does not exist.")

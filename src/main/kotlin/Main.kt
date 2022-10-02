@@ -1,10 +1,11 @@
 import lectores.CSVReader
+import java.io.File
 
 fun main(args: Array<String>) {
     println("Hello World!")
 
 
-    val listResiduos = CSVReader.readCSVResiduos()
+    val listResiduos = CSVReader.readCSVResiduos("data${File.separator}modelo_residuos_2021.csv")
     listResiduos.forEach {
         println(it.toString())
     }
