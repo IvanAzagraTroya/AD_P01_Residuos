@@ -4,17 +4,17 @@ fun main(args: Array<String>) {
     println("Hello World!")
 
 
-//    val listResiduos = CSVReader.readCSVResiduos()
-//    listResiduos.forEach {
-//        println(it.toString())
-//    }
+    val listResiduos = CSVReader.readCSVResiduos()
+    listResiduos.forEach {
+        println(it.toString())
+    }
 
     val listContenedores = CSVReader.readCSVContenedores()
     listContenedores.forEach {
         println(it.toString())
     }
 
-//    println(listResiduos.size)
+    println(listResiduos.size)
     println(listContenedores.size)
 
 

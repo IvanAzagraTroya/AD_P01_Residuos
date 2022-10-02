@@ -1,8 +1,8 @@
 body {
-    background-image: url(peakpx_1.jpg);
+    background-image: url(peakpx.jpg);
     color: #FFFFFF;
+    background-size: cover;
     background-repeat: no-repeat;
-    background-clip: border-box;
 }
 
 #nombres {
@@ -10,6 +10,7 @@ body {
 }
 
 #fecha {
+    text-align: right;
     padding-left: 20%;
     float:right
 }

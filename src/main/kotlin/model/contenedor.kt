@@ -1,7 +1,7 @@
 package model
 
 data class Contenedor(
-    val codigoSituad: String,
+    val codigoSituado: String,
     val tipoContenedor: TipoContenedor,
     val modelo: String,
     val descripcionModelo: String,
