@@ -80,7 +80,7 @@ object CSVReader {
         lines.forEach { line ->
             val arguments = line.split(";")
             val contenedor = Contenedor(
-                codigoSituad = arguments[0],
+                codigoSituado = arguments[0],
                 tipoContenedor = parseTipoContenedor(arguments[1]),
                 modelo = arguments[2],
                 descripcionModelo = arguments[3],
