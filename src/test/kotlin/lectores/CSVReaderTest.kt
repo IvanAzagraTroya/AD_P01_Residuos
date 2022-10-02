@@ -5,6 +5,7 @@ import model.TipoResiduo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 
 class CSVReaderTest {
@@ -24,5 +25,12 @@ class CSVReaderTest {
             { assertEquals(4, res.size) },
             { assertEquals(expectedResiduosList.toString(), res.toString()) }
         )
+    }
+
+    @Test
+    fun readCSVResiduosdevuelveExcepcion() {
+        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVResiduos("uwu") }
+
+        assertEquals("File uwu does not exist.", res.message)
     }
 }
