@@ -5,6 +5,7 @@ import model.Residuos
 import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
+import java.util.regex.Pattern
 
 /**
  * @author Daniel Rodriguez
@@ -78,9 +79,10 @@ object CSVReader {
         }
         val lines = File(csvFile).readLines().drop(1)
         lines.forEach { line ->
-            val arguments = line.split(";")
+            val l = noDoubleDelimiter(line)
+            val arguments = l.split(";")
             val contenedor = Contenedor(
-                codigoSituad = arguments[0],
+                codigoSituado = arguments[0],
                 tipoContenedor = parseTipoContenedor(arguments[1]),
                 modelo = arguments[2],
                 descripcionModelo = arguments[3],
@@ -107,5 +109,16 @@ object CSVReader {
             "PAPEL-CARTON" -> TipoContenedor.PAPEL_Y_CARTON
             else -> TipoContenedor.UNKNOWN
         }
+    }
+
+    private fun noDoubleDelimiter(x: String) : String {
+        var result = x
+        while (result.contains(";;") || result.endsWith(";")) {
+            result = result.replaceFirst(";;", ";N/A;")
+            if (result.endsWith(";")) {
+                result.plus("N/A")
+            }
+        }
+        return result
     }
 }
