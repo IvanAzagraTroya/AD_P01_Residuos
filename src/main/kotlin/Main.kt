@@ -10,12 +10,12 @@ fun main(args: Array<String>) {
         println(it.toString())
     }
 
-    val listContenedores = CSVReader.readCSVContenedores()
+    val listContenedores = CSVReader.readCSVContenedores("data${File.separator}contenedores_varios.csv")
     listContenedores.forEach {
         println(it.toString())
     }
 
-    println(listResiduos.size)
+//    println(listResiduos.size)
     println(listContenedores.size)
 
 

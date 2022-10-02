@@ -1,4 +1,0 @@
-package lectores
-
-class LectoresCsv {
-}

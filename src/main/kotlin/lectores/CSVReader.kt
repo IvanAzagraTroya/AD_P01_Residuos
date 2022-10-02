@@ -70,9 +70,9 @@ object CSVReader {
      * @author Iván Azagra
      * Lee el csv de residuos para devolver la lista de contenedores
      */
-    fun readCSVContenedores(): List<Contenedor> {
+    fun readCSVContenedores(csvFile: String): List<Contenedor> {
         val results = mutableListOf<Contenedor>()
-        val csvFile = "data${File.separator}contenedores_varios.csv"
+//        val csvFile = "data${File.separator}contenedores_varios.csv"
 
         if (!File(csvFile).exists()) {
             throw IllegalArgumentException("Contenedores csv file not found")
