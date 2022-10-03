@@ -14,14 +14,13 @@ import model.TipoContenedor
 class CSVReaderTest {
     val csvResiduosName = "data${File.separator}residuos_test.csv"
     val csvContenedoresTest = "data${File.separator}contenedores_test.csv"
+
     val expectedResiduosList = listOf(
         Residuos(año = "2021", mes = "enero", lote = 1, tipoResiduo = TipoResiduo.RESTO, distrito = 1, nombreDistrito = "Centro", toneladas = 3477.92),
         Residuos(año = "2021", mes = "febrero", lote = 3, tipoResiduo = TipoResiduo.ENVASES, distrito = 11, nombreDistrito = "Carabanchel", toneladas = 695.64),
         Residuos(año = "2021", mes = "marzo", lote = 2, tipoResiduo = TipoResiduo.VIDRIO_COMERCIAL, distrito = 4, nombreDistrito = "Salamanca", toneladas = 45.42),
         Residuos(año = "2021", mes = "abril", lote = 1, tipoResiduo = TipoResiduo.ORGANICA, distrito = 9, nombreDistrito = "Moncloa - Aravaca", toneladas = 1008.18),
     )
-
-    val csvFile = "data"+ File.separator + "contenedores_test.csv"
 
     val expectedContenedoresList = listOf(
         Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
@@ -50,7 +49,7 @@ class CSVReaderTest {
 
     @Test
     fun readCSVContenedoresTestOk() {
-        val csvFile = CSVReader.readCSVContenedores(csvContenedoresTest)
+        val csvFile = CSVReader.readCSVContenedores("data${File.separator}contenedores_test.csv")
 
         assertAll(
             { assertEquals(11, csvFile.size)},
@@ -60,7 +59,7 @@ class CSVReaderTest {
 
     @Test
     fun readCsvContenedoresException() {
-        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVContenedores("Content") }
+        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVContenedores("content") }
 
         assertEquals("File content does not exist.", res.message)
     }
