@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     }
 
 //    println(listResiduos.size)
-    println(listContenedores.size)
+//    println(listContenedores.size)
 
 
 

@@ -23,11 +23,11 @@ class CSVReaderTest {
     )
 
     val expectedContenedoresList = listOf(
-        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
-        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","","CALLE","DE FRAY LUIS DE LEON","1","CALLE DE FRAY LUIS DE LEON, 1"),
-        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","","CALLE","DE MENDEZ ALVARO","77","CALLE DE MENDEZ ALVARO, 77"),
-        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","","CALLE","DEL URANIO","2","CALLE DEL URANIO, 2"),
-        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","","CALLE","DE ANTONIO LOPEZ","181","CALLE DE ANTONIO LOPEZ, 181")
+        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
+        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1","CALLE DE FRAY LUIS DE LEON, 1"),
+        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77","CALLE DE MENDEZ ALVARO, 77"),
+        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","N/A","CALLE","DEL URANIO","2","CALLE DEL URANIO, 2"),
+        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","N/A","CALLE","DE ANTONIO LOPEZ","181","CALLE DE ANTONIO LOPEZ, 181")
     )
 
     @Test
@@ -49,18 +49,18 @@ class CSVReaderTest {
 
     @Test
     fun readCSVContenedoresTestOk() {
-        val csvFile = CSVReader.readCSVContenedores("data${File.separator}contenedores_test.csv")
+        val csvFile = CSVReader.readCSVContenedores(csvContenedoresTest)
 
         assertAll(
-            { assertEquals(11, csvFile.size)},
-            { assertEquals(expectedContenedoresList.toString(), csvFile.toString()) }
+            { assertEquals(5, csvFile.size)},
+            { assertEquals(expectedContenedoresList.toString().trim(), csvFile.toString().trim()) }
         )
     }
 
     @Test
-    fun readCsvContenedoresException() {
+    fun readCSVContenedoresException() {
         val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVContenedores("content") }
 
-        assertEquals("File content does not exist.", res.message)
+        assertEquals("csv file content not found", res.message)
     }
 }
