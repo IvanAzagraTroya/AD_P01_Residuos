@@ -126,7 +126,7 @@ object CSVReader {
 //        val csvFile = "data${File.separator}contenedores_varios.csv"
 
         if (!File(csvFile).exists()) {
-            throw IllegalArgumentException("File $csvFile does not exists")
+            throw IllegalArgumentException("csv file $csvFile not found")
         }
         val lines = File(csvFile).readLines().drop(1)
         lines.forEach { line ->
@@ -143,7 +143,8 @@ object CSVReader {
                 barrio = arguments[7],
                 tipoVia = arguments[8],
                 nombreCalle = arguments[9],
-                numero = arguments[10]
+                numero = arguments[10],
+                direccion = arguments[15]
             )
             results.add(contenedor)
         }
