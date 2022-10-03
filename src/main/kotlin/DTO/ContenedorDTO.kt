@@ -1,6 +1,10 @@
-package model
+package DTO
 
-data class Contenedor(
+import kotlinx.serialization.Serializable
+import model.TipoContenedor
+
+@Serializable
+data class ContenedorDTO(
     val codigoSituado: String,
     val tipoContenedor: TipoContenedor,
     val modelo: String,

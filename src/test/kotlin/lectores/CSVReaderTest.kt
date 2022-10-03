@@ -23,16 +23,16 @@ class CSVReaderTest {
     )
 
     val expectedContenedoresList = listOf(
-        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
-        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1","CALLE DE FRAY LUIS DE LEON, 1"),
-        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77","CALLE DE MENDEZ ALVARO, 77"),
-        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","N/A","CALLE","DEL URANIO","2","CALLE DEL URANIO, 2"),
-        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","N/A","CALLE","DE ANTONIO LOPEZ","181","CALLE DE ANTONIO LOPEZ, 181")
+        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5"),
+        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1"),
+        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77"),
+        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","N/A","CALLE","DEL URANIO","2"),
+        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","N/A","CALLE","DE ANTONIO LOPEZ", "181")
     )
 
     @Test
     fun readCSVResiduosWorksOK() {
-        val res = CSVReader.readCSVResiduos(csvResiduosName)
+        val res = CSVReader.readCSVResiduos(csvResiduosName, ";")
 
         assertAll(
             { assertEquals(4, res.size) },
@@ -42,14 +42,14 @@ class CSVReaderTest {
 
     @Test
     fun readCSVResiduosdevuelveExcepcion() {
-        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVResiduos("uwu") }
+        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVResiduos("uwu", ";") }
 
         assertEquals("File uwu does not exist.", res.message)
     }
 
     @Test
     fun readCSVContenedoresTestOk() {
-        val csvFile = CSVReader.readCSVContenedores(csvContenedoresTest)
+        val csvFile = CSVReader.readCSVContenedores(csvContenedoresTest, ";")
 
         assertAll(
             { assertEquals(5, csvFile.size)},
@@ -59,8 +59,8 @@ class CSVReaderTest {
 
     @Test
     fun readCSVContenedoresException() {
-        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVContenedores("content") }
+        val res = assertThrows<IllegalArgumentException> { CSVReader.readCSVContenedores("content", ";") }
 
-        assertEquals("csv file content not found", res.message)
+        assertEquals("File content does not exists", res.message)
     }
 }
