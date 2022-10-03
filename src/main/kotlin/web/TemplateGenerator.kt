@@ -51,7 +51,7 @@ class TemplateGenerator(
 
                     </p>
 
-                    <h4>Media de las toneladas anuales de recogidas por cada tipo de basura agrupado por distrito</h4>
+                    <h4>Media de las toneladas anuales de recogidas por cada tipo de basura agrupado por distrito: $mediaToneladasAnuales</h4>
 
                     <p>
                         <h4>(_gráfico_) Media de las toneladas mensuales de recogida por distrito</h4>

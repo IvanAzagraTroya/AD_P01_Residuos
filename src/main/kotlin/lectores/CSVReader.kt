@@ -75,7 +75,7 @@ object CSVReader {
 //        val csvFile = "data${File.separator}contenedores_varios.csv"
 
         if (!File(csvFile).exists()) {
-            throw IllegalArgumentException("Contenedores csv file not found")
+            throw IllegalArgumentException("csv file $csvFile not found")
         }
         val lines = File(csvFile).readLines().drop(1)
         lines.forEach { line ->
