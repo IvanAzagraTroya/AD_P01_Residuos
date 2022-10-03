@@ -70,7 +70,7 @@ object CSVReader {
      * @author Iván Azagra
      * Lee el csv de residuos para devolver la lista de contenedores
      */
-    fun readCSVContenedores(csvFile: String): List<Contenedor> {
+    fun readCSVContenedores(csvFile: String, delimiter: String): List<Contenedor> {
         val results = mutableListOf<Contenedor>()
 //        val csvFile = "data${File.separator}contenedores_varios.csv"
 
@@ -79,7 +79,7 @@ object CSVReader {
         }
         val lines = File(csvFile).readLines().drop(1)
         lines.forEach { line ->
-            val l = noDoubleDelimiter(line)
+            val l = noDoubleDelimiter(line, delimiter)
             val arguments = l.split(";")
             val contenedor = Contenedor(
                 codigoSituado = arguments[0],
@@ -111,11 +111,11 @@ object CSVReader {
         }
     }
 
-    private fun noDoubleDelimiter(x: String) : String {
+    private fun noDoubleDelimiter(x: String, delimiter: String) : String {
         var result = x
-        while (result.contains(";;") || result.endsWith(";")) {
-            result = result.replaceFirst(";;", ";N/A;")
-            if (result.endsWith(";")) {
+        while (result.contains("${delimiter}${delimiter}") || result.endsWith(delimiter)) {
+            result = result.replaceFirst("${delimiter}${delimiter}", "${delimiter}N/A${delimiter}")
+            if (result.endsWith(delimiter)) {
                 result.plus("N/A")
             }
         }
