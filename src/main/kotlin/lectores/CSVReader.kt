@@ -5,7 +5,6 @@ import model.Residuos
 import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
-import java.util.regex.Pattern
 import kotlin.system.exitProcess
 
 /**
@@ -144,7 +143,6 @@ object CSVReader {
                 tipoVia = arguments[8],
                 nombreCalle = arguments[9],
                 numero = arguments[10],
-                direccion = arguments[15]
             )
             results.add(contenedor)
         }
