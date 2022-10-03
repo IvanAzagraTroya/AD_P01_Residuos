@@ -6,6 +6,7 @@ import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.system.exitProcess
 
 /**
  * @author Daniel Rodriguez
@@ -16,18 +17,16 @@ object CSVReader {
      * @author Daniel Rodriguez
      * Este metodo coge el CSV de residuos y devuelve una lista no mutable de objetos Residuos
      */
-    fun readCSVResiduos(csvName: String) : List<Residuos> {
+    fun readCSVResiduos(csvName: String, delimiter: String) : List<Residuos> {
         val results = mutableListOf<Residuos>()
         //val csvName = "data${File.separator}modelo_residuos_2021.csv"
 
-        if(!File(csvName).exists()) {
-            throw IllegalArgumentException("File $csvName does not exist.")
-        }
+        checkCSVResiduosIsValid(csvName, delimiter)
 
         val lines = File(csvName).readLines().drop(1)
 
         lines.forEach {
-            val arguments = it.split(";")
+            val arguments = it.split(delimiter)
             val residuo = Residuos(
                 año = arguments[0],
                 mes = arguments[1],
@@ -41,6 +40,58 @@ object CSVReader {
         }
 
         return results
+    }
+
+    /**
+     * @author Daniel Rodriguez
+     * Este metodo comprueba que el CSV cumpla con los requisitos necesarios para ser procesado
+     * (existir, no estar vacio y que la cabecera sea correcta.)
+     */
+    private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
+        if(!File(csvName).exists()) {
+            throw IllegalArgumentException("File $csvName does not exist.")
+        }
+
+        val cabecera = File(csvName).readLines().firstOrNull()
+        if (cabecera == null) {
+            println("File $csvName is empty. Use a valid CSV file.")
+            exitProcess(1707)
+        }
+
+        val arguments = cabecera.split(delimiter)
+        var allOK = true
+
+        for (index in arguments.indices) {
+            when (index) {
+                0 -> if (arguments[index] != "Año") {
+                    allOK = false
+                }
+                1 -> if (arguments[index] != "Mes") {
+                    allOK = false
+                }
+                2 -> if (arguments[index] != "Lote") {
+                    allOK = false
+                }
+                3 -> if (arguments[index] != "Residuo") {
+                    allOK = false
+                }
+                4 -> if (arguments[index] != "Distrito") {
+                    allOK = false
+                }
+                5 -> if (arguments[index] != "Nombre Distrito") {
+                    allOK = false
+                }
+                6 -> if (arguments[index] != "Toneladas") {
+                    allOK = false
+                }
+                else allOK = false
+            }
+        }
+
+        if (!allOK) {
+            println("File $csvName has an incorrect format.")
+            exitProcess(1708)
+        }
     }
 
     /**
