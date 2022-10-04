@@ -55,10 +55,24 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
                 val header = getHeaderData(file, delimiter)
                 val data = getData(file, delimiter)
                 parseCSV(file.nameWithoutExtension, header, data)
-                parseXML(file.nameWithoutExtension, header, data)
-                parseJSON(file.nameWithoutExtension, header, data)
+                val headerAndData = getHeaderAndData(header, data, delimiter)
+                parseXML(file.nameWithoutExtension, headerAndData)
+                parseJSON(file.nameWithoutExtension, headerAndData)
             }
         }
+    }
+
+    private fun getHeaderAndData(header: List<String>, data: List<String>, delimiter: String): Map<String, List<String>> {
+        val result = mutableMapOf<String, List<String>>()
+        for (index in header.indices) {
+            val list = mutableListOf<String>()
+            for (line in data) {
+                val dataToAdd = line.split(delimiter)[index]
+                list.add(dataToAdd)
+            }
+            result.putIfAbsent(header[index], list.toList())
+        }
+        return result.toMap()
     }
 
     private fun getData(file: File, delimiter: String): List<String> {
@@ -138,25 +152,46 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
         return text
     }
 
-    private fun parseXML(originalCSV: String, header: List<String>, data: List<String>) {
+    private fun parseXML(originalCSV: String, headerData: Map<String, List<String>>) {
         val newXMLfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.xml")
 
-        //val writer = FileWriter(newXMLfile)
-        //writer.write(generateXML(header, data))
+        val writer = FileWriter(newXMLfile)
+        writer.write(generateXML(headerData, originalCSV))
     }
 
-    private fun generateXML(header: List<String>, data: List<String>) {
-        //TODO: USAR LIBRERIA EXTERNA PARA PLASMAR LOS DATOS EN UN XML
+    private fun generateXML(headerData: Map<String, List<String>>, originalCSV: String): String {
+        val text = "<?xml version = \"1.0\" encoding = \"UTF-8\"?>"
+        text.plus("\n<${originalCSV}>")
+        for (item in headerData) {
+            text.plus("\n   <${item.key}_list>")
+            for (index in headerData.values.indices) {
+                text.plus("\n      <${item.key} number=\"${index}\">${headerData.values.toList()[index]}</${item.key}>")
+            }
+            text.plus("\n   </${item.key}_list>")
+        }
+        text.plus("\n</${originalCSV}>")
+        return text
     }
 
-    private fun parseJSON(originalCSV: String, header: List<String>, data: List<String>) {
+    private fun parseJSON(originalCSV: String, headerData: Map<String, List<String>>) {
         val newJSONfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.json")
 
-        //val writer = FileWriter(newJSONfile)
-        //writer.write(generateJSON(header, data))
+        val writer = FileWriter(newJSONfile)
+        writer.write(generateJSON(headerData, originalCSV))
     }
 
-    private fun generateJSON(header: List<String>, data: List<String>) {
-        //TODO: USAR LIBRERIA EXTERNA PARA PLASMAR LOS DATOS EN JSON
+    private fun generateJSON(headerData: Map<String, List<String>>, originalCSV: String): String {
+        val text = "{"
+        text.plus("\n   \"${originalCSV}\" : {")
+        for (item in headerData) {
+            text.plus("\n      \"${item.key}_list\" : {")
+            for (index in headerData.values.indices) {
+                text.plus("\n         \"${item.key} number ${index}\" : \"${headerData.values.toList()[index]}\",")
+            }
+            text.plus("\n      }")
+        }
+        text.plus("\n   }")
+        text.plus("\n}")
+        return text
     }
 }
