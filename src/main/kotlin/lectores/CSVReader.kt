@@ -18,11 +18,15 @@ object CSVReader {
      */
     fun readCSVResiduos(csvName: String, delimiter: String) : List<Residuos> {
         val results = mutableListOf<Residuos>()
-        //val csvName = "data${File.separator}modelo_residuos_2021.csv"
 
         checkCSVResiduosIsValid(csvName, delimiter)
 
         val lines = File(csvName).readLines().drop(1)
+
+        if (lines.isEmpty()) {
+            println("File $csvName's content is empty. Use a valid csv file.")
+            exitProcess(1709)
+        }
 
         lines.forEach {
             val arguments = it.split(delimiter)
@@ -47,13 +51,21 @@ object CSVReader {
      * (existir, no estar vacio y que la cabecera sea correcta.)
      */
     private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
-        if(!File(csvName).exists()) {
-            throw IllegalArgumentException("File $csvName does not exist.")
+        val csvFile = File(csvName)
+        if (!csvFile.exists()) {
+            println("File ${csvFile.name} does not exist.")
+            exitProcess(1706)
+        } else if (!csvFile.canRead()) {
+            println("File ${csvFile.name} cannot be read.")
+            exitProcess(1705)
+        } else if (!csvFile.name.endsWith(".csv")) {
+            println("File ${csvFile.name} is not a csv file.")
+            exitProcess(1704)
         }
 
-        val cabecera = File(csvName).readLines().firstOrNull()
+        val cabecera = csvFile.readLines().firstOrNull()
         if (cabecera == null) {
-            println("File $csvName is empty. Use a valid CSV file.")
+            println("File ${csvFile.name} is empty. Use a valid CSV file.")
             exitProcess(1707)
         }
 
@@ -83,12 +95,12 @@ object CSVReader {
                 6 -> if (arguments[index] != "Toneladas") {
                     allOK = false
                 }
-                else allOK = false
+                else -> allOK = false
             }
         }
 
         if (!allOK) {
-            println("File $csvName has an incorrect format.")
+            println("File ${csvFile.name} has an incorrect format.")
             exitProcess(1708)
         }
     }
@@ -160,7 +172,7 @@ object CSVReader {
         }
     }
 
-    private fun noDoubleDelimiter(x: String, delimiter: String) : String {
+    fun noDoubleDelimiter(x: String, delimiter: String) : String {
         var result = x
         while (result.contains("${delimiter}${delimiter}") || result.endsWith(delimiter)) {
             result = result.replaceFirst("${delimiter}${delimiter}", "${delimiter}N/A${delimiter}")
