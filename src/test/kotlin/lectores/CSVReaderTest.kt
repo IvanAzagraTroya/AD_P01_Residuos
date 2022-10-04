@@ -12,8 +12,8 @@ import model.Contenedor
 import model.TipoContenedor
 
 class CSVReaderTest {
-    private val csvResiduosName = "data${File.separator}residuos_test.csv"
-    private val csvContenedoresTest = "data${File.separator}contenedores_test.csv"
+    private val csvResiduosName = "dataTest${File.separator}residuos_test.csv"
+    private val csvContenedoresTest = "dataTest${File.separator}contenedores_test.csv"
 
     private val expectedResiduosList = listOf(
         Residuos(año = "2021", mes = "enero", lote = 1, tipoResiduo = TipoResiduo.RESTO, distrito = 1, nombreDistrito = "Centro", toneladas = 3477.92),
@@ -22,7 +22,7 @@ class CSVReaderTest {
         Residuos(año = "2021", mes = "abril", lote = 1, tipoResiduo = TipoResiduo.ORGANICA, distrito = 9, nombreDistrito = "Moncloa - Aravaca", toneladas = 1008.18),
     )
 
-    val expectedContenedoresList = listOf(
+    private val expectedContenedoresList = listOf(
         Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
         Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1","CALLE DE FRAY LUIS DE LEON, 1"),
         Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77","CALLE DE MENDEZ ALVARO, 77"),
