@@ -5,7 +5,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
     println("Hello World!")
-    println(DataCalculator.calculateMediaContenedores())
+    println(DataCalculator.calculateMediaContenedores().toString())
 
 //    val listResiduos = CSVReader.readCSVResiduos("data${File.separator}modelo_residuos_2021.csv", ";")
 //    listResiduos.forEach {
