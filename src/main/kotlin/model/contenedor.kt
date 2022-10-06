@@ -12,4 +12,5 @@ data class Contenedor(
     val tipoVia: String,
     val nombreCalle: String,
     val numero: String
-)
+) {
+}

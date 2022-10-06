@@ -16,4 +16,18 @@ data class ContenedorDTO(
     val tipoVia: String,
     val nombreCalle: String,
     val numero: String
-)
+){
+    fun toContenedorDTO() = ContenedorDTO(
+        codigoSituado= codigoSituado,
+        tipoContenedor = tipoContenedor,
+        modelo = modelo,
+        descripcionModelo = descripcionModelo,
+        cantidad = cantidad,
+        lote = lote,
+        distrito = distrito,
+        barrio = barrio,
+        tipoVia = tipoVia,
+        nombreCalle = nombreCalle,
+        numero = numero
+    ).toString()
+}
