@@ -147,7 +147,6 @@ object CSVReader {
                 tipoVia = arguments[8],
                 nombreCalle = arguments[9],
                 numero = arguments[10],
-                direccion = arguments[15]
             )
             results.add(contenedor)
         }
