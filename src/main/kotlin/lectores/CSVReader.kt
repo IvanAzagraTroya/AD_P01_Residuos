@@ -5,7 +5,6 @@ import model.Residuos
 import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
-import java.util.regex.Pattern
 import kotlin.system.exitProcess
 
 /**
@@ -25,8 +24,7 @@ object CSVReader {
         val lines = File(csvName).readLines().drop(1)
 
         if (lines.isEmpty()) {
-            println("File $csvName's content is empty. Use a valid csv file.")
-            exitProcess(1709)
+            throw Exception("File $csvName's content is empty. Use a valid csv file.")
         }
 
         lines.forEach {
@@ -54,21 +52,15 @@ object CSVReader {
     private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
         val csvFile = File(csvName)
         if (!csvFile.exists()) {
-            println("File ${csvFile.name} does not exist.")
-            exitProcess(1706)
+            throw Exception("File ${csvFile.name} does not exist.")
         } else if (!csvFile.canRead()) {
-            println("File ${csvFile.name} cannot be read.")
-            exitProcess(1705)
+            throw Exception("File ${csvFile.name} cannot be read.")
         } else if (!csvFile.name.endsWith(".csv")) {
-            println("File ${csvFile.name} is not a csv file.")
-            exitProcess(1704)
+            throw Exception("File ${csvFile.name} is not a csv file.")
         }
 
         val cabecera = csvFile.readLines().firstOrNull()
-        if (cabecera == null) {
-            println("File ${csvFile.name} is empty. Use a valid CSV file.")
-            exitProcess(1707)
-        }
+            ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
 
         val arguments = cabecera.split(delimiter)
         var allOK = true
@@ -101,8 +93,7 @@ object CSVReader {
         }
 
         if (!allOK) {
-            println("File ${csvFile.name} has an incorrect format.")
-            exitProcess(1708)
+            throw Exception("File ${csvFile.name} has an incorrect format.")
         }
     }
 
@@ -138,7 +129,7 @@ object CSVReader {
 //        val csvFile = "data${File.separator}contenedores_varios.csv"
 
         if (!File(csvFile).exists()) {
-            throw IllegalArgumentException("csv file $csvFile not found")
+            throw Exception("csv file $csvFile not found.")
         }
         val lines = File(csvFile).readLines().drop(1)
         lines.forEach { line ->

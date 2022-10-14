@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("com.github.stefanbirkner:system-rules:1.19.0")
 }
 
 tasks.test {
