@@ -1,18 +1,16 @@
 
-import lectores.CSVReader
 import web.DataCalculator
-import java.io.File
 
 fun main(args: Array<String>) {
     println("Hello World!")
-    println(DataCalculator.calculateMediaContenedores().toString())
+    DataCalculator.residuosData()
 
 //    val listResiduos = CSVReader.readCSVResiduos("data${File.separator}modelo_residuos_2021.csv", ";")
 //    listResiduos.forEach {
 //        println(it.toString())
 //    }
 
-    val listContenedores = CSVReader.readCSVContenedores("data${File.separator}contenedores_varios.csv", ";")
+    //val listContenedores = CSVReader.readCSVContenedores("data${File.separator}contenedores_varios.csv", ";")
 //    listContenedores.forEach {
 //        println(it.toString())
 //    }
