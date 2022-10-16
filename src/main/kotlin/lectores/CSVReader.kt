@@ -5,7 +5,6 @@ import model.Residuos
 import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
-import kotlin.system.exitProcess
 
 /**
  * @author Daniel Rodriguez
@@ -51,13 +50,7 @@ object CSVReader {
      */
     private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
         val csvFile = File(csvName)
-        if (!csvFile.exists()) {
-            throw Exception("File ${csvFile.name} does not exist.")
-        } else if (!csvFile.canRead()) {
-            throw Exception("File ${csvFile.name} cannot be read.")
-        } else if (!csvFile.name.endsWith(".csv")) {
-            throw Exception("File ${csvFile.name} is not a csv file.")
-        }
+        basicChecks(csvFile)
 
         val cabecera = csvFile.readLines().firstOrNull()
             ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
@@ -128,10 +121,14 @@ object CSVReader {
         val results = mutableListOf<Contenedor>()
 //        val csvFile = "data${File.separator}contenedores_varios.csv"
 
-        if (!File(csvFile).exists()) {
-            throw Exception("csv file $csvFile not found.")
-        }
+        checkCSVContenedoresIsValid(csvFile, delimiter)
+
         val lines = File(csvFile).readLines().drop(1)
+
+        if (lines.isEmpty()) {
+            throw Exception("File $csvFile's content is empty. Use a valid csv file.")
+        }
+
         lines.forEach { line ->
             val l = noDoubleDelimiter(line, delimiter)
             val arguments = l.split(";")
@@ -151,6 +148,59 @@ object CSVReader {
             results.add(contenedor)
         }
         return results
+    }
+
+    private fun checkCSVContenedoresIsValid(csvFile: String, delimiter: String) {
+        val csv = File(csvFile)
+        basicChecks(csv)
+
+        val cabecera = csv.readLines().firstOrNull()
+            ?: throw Exception("File ${csv.name} is empty. Use a valid CSV file.")
+
+        val arguments = cabecera.split(delimiter)
+        var allOK = true
+
+        for (index in arguments.indices) {
+            when (index) {
+                0 -> if (arguments[index] != "Código Interno del Situad") {
+                    allOK = false
+                }
+                1 -> if (arguments[index] != "Tipo Contenedor") {
+                    allOK = false
+                }
+                2 -> if (arguments[index] != "Modelo") {
+                    allOK = false
+                }
+                3 -> if (arguments[index] != "Descripcion Modelo") {
+                    allOK = false
+                }
+                4 -> if (arguments[index] != "Cantidad") {
+                    allOK = false
+                }
+                5 -> if (arguments[index] != "Lote") {
+                    allOK = false
+                }
+                6 -> if (arguments[index] != "Distrito") {
+                    allOK = false
+                }
+                7 -> if (arguments[index] != "Barrio") {
+                    allOK = false
+                }
+                8 -> if (arguments[index] != "Tipo Vía") {
+                    allOK = false
+                }
+                9 -> if (arguments[index] != "Nombre") {
+                    allOK = false
+                }
+                10 -> if (arguments[index] != "Número") {
+                    allOK = false
+                }
+            }
+        }
+
+        if (!allOK) {
+            throw Exception("File ${csv.name} has an incorrect format.")
+        }
     }
 
     private fun parseTipoContenedor(c: String): TipoContenedor {
@@ -174,4 +224,15 @@ object CSVReader {
         }
         return result
     }
+
+    private fun basicChecks(csv: File) {
+        if (!csv.exists()) {
+            throw Exception("File ${csv.name} does not exist.")
+        } else if (!csv.canRead()) {
+            throw Exception("File ${csv.name} cannot be read.")
+        } else if (!csv.name.endsWith(".csv")) {
+            throw Exception("File ${csv.name} is not a csv file.")
+        }
+    }
 }
+
