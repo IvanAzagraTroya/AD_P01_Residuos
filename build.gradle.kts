@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     implementation("com.github.stefanbirkner:system-rules:1.19.0")
 }
 
