@@ -5,6 +5,7 @@ import java.io.File
 import java.io.FileWriter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlin.system.exitProcess
 
 /**
@@ -16,19 +17,11 @@ import kotlin.system.exitProcess
  * @param originalDirectory El directorio original de donde leerá los csv (y solo los csv)
  * @param destinationDirectoryPath El directorio destino donde se crearán los nuevos ficheros
  * @param delimiter El delimitador que usan los csv a leer
- * @throws 1707 - Si el directorio donde se quiere parsear no es un directorio.
- * @throws 1708 - Si en caso de querer borrar el directorio de destino existente, este no se puede borrar.
- * @throws 1709 - Si el directorio original no es un directorio.
- * @throws 1710 - Si el directorio original no existe.
- * @throws 1711 - Si un archivo .csv dentro del directorio original no puede ser leido.
- * @throws 1712 - Si la cabecera (y contenido) de un archivo csv dentro del directorio original están vacíos.
- * @throws 1713 - Si el contenido (no cabecera) de un archivo csv dentro del directorio original está vacío.
- * @throws 99999 - Si el directorio original no es un está vacío.
  */
 class CSVParser(private val originalDirectory: String, private val destinationDirectoryPath: String, private val delimiter: String) {
     private val destinationDirectory = File(destinationDirectoryPath)
     private val directory = File(originalDirectory)
-    private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    private val dtf: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
     private val now: LocalDateTime = LocalDateTime.now()
 
     fun parse() {
