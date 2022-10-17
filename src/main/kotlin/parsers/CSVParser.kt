@@ -148,8 +148,10 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
     private fun parseXML(originalCSV: String, headerData: Map<String, List<String>>) {
         val newXMLfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.xml")
 
-        val writer = FileWriter(newXMLfile)
-        writer.write(generateXML(headerData, originalCSV))
+        if (newXMLfile.canWrite()) {
+            val writer = FileWriter(newXMLfile)
+            writer.write(generateXML(headerData, originalCSV))
+        }
     }
 
     private fun generateXML(headerData: Map<String, List<String>>, originalCSV: String): String {
@@ -169,8 +171,10 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
     private fun parseJSON(originalCSV: String, headerData: Map<String, List<String>>) {
         val newJSONfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.json")
 
-        val writer = FileWriter(newJSONfile)
-        writer.write(generateJSON(headerData, originalCSV))
+        if (newJSONfile.canWrite()) {
+            val writer = FileWriter(newJSONfile)
+            writer.write(generateJSON(headerData, originalCSV))
+        }
     }
 
     private fun generateJSON(headerData: Map<String, List<String>>, originalCSV: String): String {
