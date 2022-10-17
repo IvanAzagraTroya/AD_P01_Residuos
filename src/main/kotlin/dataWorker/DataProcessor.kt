@@ -1,6 +1,5 @@
-package web
+package dataWorker
 
-import jetbrains.letsPlot.Geom
 import jetbrains.letsPlot.Stat.identity
 import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomBar
@@ -11,23 +10,16 @@ import jetbrains.letsPlot.letsPlot
 import jetbrains.letsPlot.themeGrey
 import model.*
 import java.awt.Color
-import java.io.File
 import java.util.*
-import kotlin.io.path.Path
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
  * @author Iván Azagra Troya
  * Clase encargada de calcular los datos de los CSV
  */
-object DataCalculator {
-    val contenedoresData = readCSVContenedores(File("data${File.separator}contenedores_varios.csv"), ";")
-    val residuoData =  readCSVResiduos("data${File.separator}modelo_residuos_2021.csv", ";")
+class DataProcessor(contenedoreData: List<Contenedor>, residuoData: List<Residuos>) {
 
-    val distritos = contenedoresData.groupBy { it.distrito }.count()
-
-    fun contenedorData() {
+    fun contenedorData(contenedoresData: List<Contenedor>) {
 //        val data = content.toDataFrame()
 
         // Tipos de contenedores
@@ -57,6 +49,8 @@ object DataCalculator {
         println("Media de contenedores de vidrio $mediaVidrio")
         println("Media de contenedores de papel y cartón $mediaPapelCarton")
 
+        // Número de distritos
+        val distritos = contenedoresData.groupBy { it.distrito }.count()
 
         // Media de contenedores por tipo
         println("Media de contenedores orgánicos por distrito: ${mediaOrganicos.div(distritos)}")
@@ -68,7 +62,7 @@ object DataCalculator {
 
     }
 
-    fun residuosData() {
+    fun residuosData(residuoData: List<Residuos>) {
         val residuosResto = residuoData.filter {it.tipoResiduo == TipoResiduo.RESTO}
         val residuosEnvases = residuoData.filter { it.tipoResiduo == TipoResiduo.ENVASES }
         val residuosVidrio = residuoData.filter { it.tipoResiduo == TipoResiduo.VIDRIO }
@@ -165,7 +159,10 @@ object DataCalculator {
 //
 //    }
 
-    fun graficoToneladasDistrito(distrito: String, totalResiduoDistrito: Map<Int, List<Residuos>>) { // Total residuo tiene que ser un map
+    fun graficoToneladasDistrito(distrito: String, totalResiduoDistrito: Map<Int, List<Residuos>>, residuoData: List<Residuos>) { // Total residuo tiene que ser un map
+        // Duplicado por el momento en línea 128
+        val totalResiduoDistrito = residuoData.groupBy { it.distrito }.filter { distrito.equals(it.value.equals(distrito)) }
+            .toMap()
         var g: Plot = letsPlot(data = totalResiduoDistrito) + geomBar(
             stat = identity,
             alpha = 1.0,
@@ -183,7 +180,7 @@ object DataCalculator {
         ggsave(g, "toneladasEn$distrito.png", 2, 3, "src/main/resources/images")
     }
 
-    fun graficoMax(distrito: String) {
+    fun graficoMax(distrito: String, residuoData: List<Residuos>) {
 
         var gMax: Plot = letsPlot(data = residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) }.maxOf {  })+ geomBar(
             stat = identity,
@@ -199,8 +196,8 @@ object DataCalculator {
             title = "Máximo"
         )
     }
-    fun graficoMin(distrito: String) {
-        var g:Plot = letsPlot(data = residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) })+geomBar(
+    fun graficoMin(distrito: String, residuoData: List<Residuos>) {
+        var g:Plot = letsPlot(data = residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) }.toMap())+geomBar(
             stat = identity,
             alpha = 1.0,
             fill = Color.DARK_GRAY,
@@ -215,7 +212,7 @@ object DataCalculator {
         )
     }
 
-    fun graficoMedia(distrito: String) {
+    fun graficoMedia(distrito: String, residuoData: List<Residuos>) {
         var g:Plot = letsPlot(data =  )+geomBar(
                 stat = identity,
                 alpha = 1.0,
@@ -232,11 +229,11 @@ object DataCalculator {
 
     }
 
-    fun graficoToneladasMes() {
+    fun graficoToneladasMes(residuoData: List<Residuos>) {
         var agrupado = residuoData.groupBy { "distrito" }.filter {  }//aggregate(
 //            (residuoData.groupBy { it.distrito }.map {it.value.maxOf { it.toneladas }.roundToInt() }) into "Máximo"
 //                (residuoData.groupBy {  }) into "as"
-        )
+//        )
     }
 
 }
