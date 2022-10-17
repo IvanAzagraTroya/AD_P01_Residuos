@@ -1,11 +1,20 @@
 package web
 
-import model.TipoContenedor
-import model.TipoResiduo
-import model.readCSVContenedores
-import model.readCSVResiduos
+import jetbrains.letsPlot.Geom
+import jetbrains.letsPlot.Stat.identity
+import jetbrains.letsPlot.export.ggsave
+import jetbrains.letsPlot.geom.geomBar
+import jetbrains.letsPlot.intern.Plot
+import jetbrains.letsPlot.label.ggtitle
+import jetbrains.letsPlot.label.labs
+import jetbrains.letsPlot.letsPlot
+import jetbrains.letsPlot.themeGrey
+import model.*
+import java.awt.Color
 import java.io.File
 import java.util.*
+import kotlin.io.path.Path
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -15,42 +24,10 @@ import kotlin.math.roundToInt
 object DataCalculator {
     val contenedoresData = readCSVContenedores(File("data${File.separator}contenedores_varios.csv"), ";")
     val residuoData =  readCSVResiduos("data${File.separator}modelo_residuos_2021.csv", ";")
-//    var mediaContenedores: String = ""
 
-//    private var numDistritos: Int = 0
+    val distritos = contenedoresData.groupBy { it.distrito }.count()
 
-/*    fun calculateMediaContenedores() {
-        var org = 0
-        var resto = 0
-        var envases = 0
-        var vidrio = 0
-        var pap = 0
-        var data = content.forEach{
-            val type = it.tipoContenedor
-            val distrito = it.distrito
-            val listDistritos = mutableListOf<String>()
-
-            println("distritos: $distrito")
-            listDistritos.add(distrito)
-            println(listDistritos)
-
-            println("numeros distritos: $numDistritos")
-
-            when(type) {
-                TipoContenedor.ORGANICA -> org++
-                TipoContenedor.RESTO -> resto++
-                TipoContenedor.ENVASES -> envases++
-                TipoContenedor.VIDRIO -> vidrio++
-                else -> pap++
-            }
-        }
-
-        val media = (org + resto + envases + vidrio + pap)/ 1
-        println("$media, $numDistritos")
-
-    }*/
-
-    fun contenedoresData() {
+    fun contenedorData() {
 //        val data = content.toDataFrame()
 
         // Tipos de contenedores
@@ -60,7 +37,6 @@ object DataCalculator {
         val vidrio = contenedoresData.filter {it.tipoContenedor == TipoContenedor.VIDRIO}
         val papelCarton = contenedoresData.filter { it.tipoContenedor == TipoContenedor.PAPEL_Y_CARTON}
 
-        // Num distritos: val distritos = content.groupBy { it.distrito }.count()
         // Contenedores por distrito
         println("Contenedores orgánicos por distrito: ${organica.groupingBy { it.distrito }.eachCount()}")
         println("Contenedores de restos por distrito: ${resto.groupingBy { it.distrito }.eachCount()}")
@@ -82,6 +58,14 @@ object DataCalculator {
         println("Media de contenedores de papel y cartón $mediaPapelCarton")
 
 
+        // Media de contenedores por tipo
+        println("Media de contenedores orgánicos por distrito: ${mediaOrganicos.div(distritos)}")
+        println("Media de contenedores de restos por distrito: ${mediaRestos.div(distritos)}")
+        println("Media de contenedores de envases por distrito: ${mediaEnvases.div(distritos)}")
+        println("Media de contenedores de vidrio por distrito: ${mediaVidrio.div(distritos)}")
+        println("Media de contenedores de papel y cartón por distrito: ${mediaPapelCarton.div(distritos)}")
+
+
     }
 
     fun residuosData() {
@@ -100,18 +84,18 @@ object DataCalculator {
 
         println("Media de toneladas de basura de cada tipo por distrito")
 
-        println("Resto  ${residuosResto.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}}")
-        println("Envases  ${residuosEnvases.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Vidrio  ${residuosVidrio.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Organica  ${residuosOrganica.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Papel y Cartón  ${residuosPapelCarton.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Puntos Limpios  ${residuosPuntosLimpios.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Cartón comercial  ${residuosCartonComercial.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Vidrio Comercial  ${residuosVidrioComercial.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Pilas  ${residuosPilas.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Animales Muertos  ${residuosAnimalesMuertos.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("RCD  ${residuosRCD.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
-        println("Ropa usada  ${residuosRopaUsada.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}.roundToInt()}}")
+        println("Resto  ${residuosResto.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Envases  ${residuosEnvases.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Vidrio  ${residuosVidrio.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Organica  ${residuosOrganica.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Papel y Cartón  ${residuosPapelCarton.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Puntos Limpios  ${residuosPuntosLimpios.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Cartón comercial  ${residuosCartonComercial.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Vidrio Comercial  ${residuosVidrioComercial.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Pilas  ${residuosPilas.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Animales Muertos  ${residuosAnimalesMuertos.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("RCD  ${residuosRCD.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
+        println("Ropa usada  ${residuosRopaUsada.groupBy{it.distrito}.map{it.value.sumOf{it.toneladas}}.average().roundToInt()}")
 
         println("Máximo")
 
@@ -143,33 +127,116 @@ object DataCalculator {
         println("RCD:  ${residuosRCD.groupBy{it.distrito}.map{ it.value.maxOf{it.toneladas}.roundToInt()}}")
         println("Ropa usada:  ${residuosRopaUsada.groupBy{it.distrito}.map{ it.value.minOf{it.toneladas}.roundToInt()}}")
 
+        // Toneladas de residuo por distrito
+        //val residuosDistrito = residuoData.groupBy { it.distrito }.map { it.value.sumOf { it.toneladas }.roundToInt() }
+        // TODO valor de ejemplo
+        var distrito = "villaverde"
+        val residuosDistrito = residuoData.groupBy { it.distrito }.filter { distrito.equals(it.value.equals(distrito)) }
+            .toMap()
+            //.aggregate { sumOf(it.toneladas)}.toMap()
+        println("Lista de toneladas por distrito: $residuosDistrito")
+        // Toneladas de residuo totales
+        val totalResiduos = residuoData.sumOf { it.toneladas }.roundToInt()
+        println("Toneladas totales: ${totalResiduos}")
+        println("Toneladas totales ${residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) }}")
     }
 
     // Esto no sé si está bien porque no me cuadra, hay que revisar
-    fun getMediaPorDistrito(distrito: String) {
-        println("Media de contenedores en $distrito")
+//    fun getMediaPorDistrito(distrito: String) {
+//        println("Media de contenedores en $distrito")
+//        val organicaDistrito = contenedoresData.filter { it.tipoContenedor== TipoContenedor.ORGANICA }
+//            .groupingBy{distrito}.eachCount()
+//
+//        val restoDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.RESTO }
+//            .groupingBy { distrito }.eachCount()
+//        val envasesDistrito = contenedoresData.filter  { it.tipoContenedor == TipoContenedor.ENVASES }
+//            .groupingBy{distrito}.eachCount().size
+//        val vidrioDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.VIDRIO }
+//            .groupingBy { distrito.uppercase(Locale.getDefault()) }.eachCount().size
+//        val papelCartonDistrito = contenedoresData.filter { it.distrito.equals(distrito.uppercase(Locale.getDefault())) }
+//            .groupingBy { it.tipoContenedor == TipoContenedor.PAPEL_Y_CARTON }.eachCount().size
+//        println("Media de contenedores orgánicos en el distrito $organicaDistrito")
+//        println("Media de contenedores de restos en el distrito $restoDistrito")
+//        println("Media de contenedores de envases en el distrito $envasesDistrito")
+//        println("Media de contenedores de vidrio en el distrito $vidrioDistrito")
+//        println("Media de contenedores de papel y cartón en el distrito $papelCartonDistrito")
+//
+////        println("Suma temporal para pruebas de las medias: organicaDistrito ${restoDistrito + envasesDistrito + vidrioDistrito + papelCartonDistrito}")
+//
+//    }
 
-        val organicaDistrito = contenedoresData.filter{it.tipoContenedor == TipoContenedor.ORGANICA}
-            .groupBy { it.distrito == distrito.uppercase(Locale.getDefault()) }.map{it.value.size}
-            .average().roundToInt()
-        val restoDistrito = contenedoresData.filter{it.tipoContenedor == TipoContenedor.RESTO}
-            .groupBy { it.distrito == distrito.uppercase(Locale.getDefault()) }.map { it.value.size }
-            .average().roundToInt()
-        val envasesDistrito = contenedoresData.filter{it.tipoContenedor == TipoContenedor.ENVASES}
-            .groupBy { it.distrito == distrito.uppercase(Locale.getDefault()) }.map { it.value.size }
-            .average().roundToInt()
-        val vidrioDistrito = contenedoresData.filter{it.tipoContenedor == TipoContenedor.VIDRIO}
-            .groupBy { it.distrito == distrito.uppercase(Locale.getDefault()) }.map { it.value.size }
-            .average().roundToInt()
-        val papelCartonDistrito = contenedoresData.filter{it.tipoContenedor == TipoContenedor.PAPEL_Y_CARTON}
-            .groupBy { it.distrito == distrito.uppercase(Locale.getDefault()) }.map { it.value.size }
-            .average().roundToInt()
-        println("Media de contenedores orgánicos en el distrito $organicaDistrito")
-        println("Media de contenedores de restos en el distrito $restoDistrito")
-        println("Media de contenedores de envases en el distrito $envasesDistrito")
-        println("Media de contenedores de vidrio en el distrito $vidrioDistrito")
-        println("Media de contenedores de papel y cartón en el distrito $papelCartonDistrito")
+    fun graficoToneladasDistrito(distrito: String, totalResiduoDistrito: Map<Int, List<Residuos>>) { // Total residuo tiene que ser un map
+        var g: Plot = letsPlot(data = totalResiduoDistrito) + geomBar(
+            stat = identity,
+            alpha = 1.0,
+            fill = Color.DARK_GRAY,
+            color = Color.BLUE
+        ){
+            x = "Residuos"
+            y = "Toneladas"
+        } + labs(
+            x = "Residuos",
+            y = "Toneladas",
+            title = "Toneladas totales por barrio"
+        ) + ggtitle("Gráfico toneladas por distrito"+ themeGrey())
 
-        println("Suma temporal para pruebas de las medias: ${organicaDistrito + restoDistrito + envasesDistrito + vidrioDistrito + papelCartonDistrito}")
+        ggsave(g, "toneladasEn$distrito.png", 2, 3, "src/main/resources/images")
     }
+
+    fun graficoMax(distrito: String) {
+
+        var gMax: Plot = letsPlot(data = residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) }.maxOf {  })+ geomBar(
+            stat = identity,
+            alpha = 1.0,
+            fill = Color.DARK_GRAY,
+            color = Color.BLUE
+        ) {
+            x = "mes"
+            y = "max"
+        } + labs(
+            x = "Residuos",
+            y = "Max",
+            title = "Máximo"
+        )
+    }
+    fun graficoMin(distrito: String) {
+        var g:Plot = letsPlot(data = residuoData.groupBy { it.mes }.filter { distrito.equals(it.value.equals(distrito)) })+geomBar(
+            stat = identity,
+            alpha = 1.0,
+            fill = Color.DARK_GRAY,
+            color = Color.BLUE
+        ) {
+            x = "mes"
+            y = "Mínimo"
+        } + labs(
+            x = "Residuos",
+            y = "Min",
+            title = "Mínimo"
+        )
+    }
+
+    fun graficoMedia(distrito: String) {
+        var g:Plot = letsPlot(data =  )+geomBar(
+                stat = identity,
+                alpha = 1.0,
+                fill = Color.DARK_GRAY,
+                color = Color.BLUE
+            ) {
+                x = "mes"
+                y = "Mínimo"
+            } + labs(
+                x = "Residuos",
+                y = "Min",
+                title = "Mínimo"
+            )
+
+    }
+
+    fun graficoToneladasMes() {
+        var agrupado = residuoData.groupBy { "distrito" }.filter {  }//aggregate(
+//            (residuoData.groupBy { it.distrito }.map {it.value.maxOf { it.toneladas }.roundToInt() }) into "Máximo"
+//                (residuoData.groupBy {  }) into "as"
+        )
+    }
+
 }
