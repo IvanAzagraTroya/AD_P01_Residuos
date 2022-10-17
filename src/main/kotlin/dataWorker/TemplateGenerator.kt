@@ -1,4 +1,4 @@
-package web
+package dataWorker
 
 class TemplateGenerator(
     val distrito: String,
