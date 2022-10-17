@@ -22,11 +22,11 @@ class CSVReaderTest {
     )
 
     private val expectedContenedoresList = listOf(
-        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5","CALLE DE FLORA TRISTAN, 5"),
-        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1","CALLE DE FRAY LUIS DE LEON, 1"),
-        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77","CALLE DE MENDEZ ALVARO, 77"),
-        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","N/A","CALLE","DEL URANIO","2","CALLE DEL URANIO, 2"),
-        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","N/A","CALLE","DE ANTONIO LOPEZ","181","CALLE DE ANTONIO LOPEZ, 181")
+        Contenedor("182476",TipoContenedor.PAPEL_Y_CARTON, "IG_17","PC 3000 CAMPANA PE",1,3,"VILLAVERDE","N/A","CALLE", "DE FLORA TRISTAN","5"),
+        Contenedor("182493",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE FRAY LUIS DE LEON","1"),
+        Contenedor("182993",TipoContenedor.PAPEL_Y_CARTON,"IG_2","PC 3000 CAMPANA PE",1,3,"ARGANZUELA","N/A","CALLE","DE MENDEZ ALVARO","77"),
+        Contenedor("179018",TipoContenedor.ENVASES,"CL_17","Env 3200 CL",1,3,"VILLAVERDE","N/A","CALLE","DEL URANIO","2"),
+        Contenedor("178986",TipoContenedor.RESTO,"CL_12","Res 3200 CL",1,3,"USERA","N/A","CALLE","DE ANTONIO LOPEZ","181")
     )
 
     @Test
@@ -85,9 +85,37 @@ class CSVReaderTest {
     }
 
     @Test
-    fun readCSVContenedoresException() {
+    fun readCSVContenedoresThrowsException1() {
         val res = assertThrows<Exception> { CSVReader.readCSVContenedores("content", ";") }
 
-        assertEquals("csv file content not found.", res.message)
+        assertEquals("File content does not exist.", res.message)
+    }
+
+    @Test
+    fun readCSVContenedoresThrowsException2() {
+        val res = assertThrows<Exception> { CSVReader.readCSVContenedores("dataTest${File.separator}bad_format.csv", ";") }
+
+        assertEquals("File bad_format.csv has an incorrect format.", res.message)
+    }
+
+    @Test
+    fun readCSVContenedoresThrowsException3() {
+        val res = assertThrows<Exception> { CSVReader.readCSVContenedores("dataTest${File.separator}emptyCSV.csv", ";") }
+
+        assertEquals("File emptyCSV.csv is empty. Use a valid CSV file.", res.message)
+    }
+
+    @Test
+    fun readCSVContenedoresThrowsException4() {
+        val res = assertThrows<Exception> { CSVReader.readCSVContenedores("dataTest${File.separator}not_a_csv.txt", ";") }
+
+        assertEquals("File not_a_csv.txt is not a csv file.", res.message)
+    }
+
+    @Test
+    fun readCSVContenedoresThrowsException5() {
+        val res = assertThrows<Exception> { CSVReader.readCSVContenedores("dataTest${File.separator}oneLineContenedores.csv", ";") }
+
+        assertEquals("File dataTest${File.separator}oneLineContenedores.csv's content is empty. Use a valid csv file.", res.message)
     }
 }

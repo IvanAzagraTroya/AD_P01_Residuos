@@ -1,19 +1,17 @@
 package model
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
-// TODO @Loli sigo sin saber como mierda hacer esto aiuda
 data class Ejecucion(
     val id: UUID,
-    val instanteEjecucion: String, //TODO(no se me ocurre cómo iría el instante de ejecución ((formato)
     val tipoOpcion: TipoOpcion?,
     val hasExit: Boolean,
     val tiempoEjecucion: String?
-
-)
-
-enum class TipoOpcion(opcion: String) {
-    PARSER("parser"),
-    RESUMEN_GLOBAL("global"),
-    RESUMEN_CIUDAD("ciudad")
+) {
+    private val instanteEjecucion: LocalDateTime = LocalDateTime.now()
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
+    val instant: String = formatter.format(instanteEjecucion)
 }
