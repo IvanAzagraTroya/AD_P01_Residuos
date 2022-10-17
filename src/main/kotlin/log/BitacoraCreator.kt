@@ -11,7 +11,6 @@ import kotlin.Throws
 
 object BitacoraCreator {
     private val PATH_TO_BITACORA_XML = "${System.getProperty("user.dir")}${File.separator}bitacora${File.separator}bitacora.xml"
-    private val results = Ejecuciones()
 
     @Throws(JAXBException::class)
     fun saveIntoBitacora(execution: Ejecucion) {
@@ -29,9 +28,7 @@ object BitacoraCreator {
             val executions: Ejecuciones = unmarshaller.unmarshal(File(PATH_TO_BITACORA_XML)) as Ejecuciones
             var duplicate = false
             for (res in executions.resultList) {
-                if (res.instant.uppercase() == execution.instant.uppercase() &&
-                    res.execution.name.uppercase() == execution.execution.name.uppercase()
-                ) {
+                if (res.id == execution.id) {
                     duplicate = true
                 }
             }
@@ -47,7 +44,7 @@ object BitacoraCreator {
         val jaxbContext: JAXBContext = JAXBContext.newInstance(Ejecuciones::class.java)
         val marshaller = jaxbContext.createMarshaller()
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE)
-        marshaller.marshal(results, File(PATH_TO_BITACORA_XML))
+        marshaller.marshal(executions, File(PATH_TO_BITACORA_XML))
     }
 
     @Throws(JAXBException::class)
