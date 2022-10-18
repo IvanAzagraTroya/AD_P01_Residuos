@@ -5,8 +5,9 @@ import DTO.ResiduosListDTO
 import com.google.gson.GsonBuilder
 import lectores.CSVReader
 import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.io.FileWriter
+//import java.time.LocalDateTime
+//import java.time.format.DateTimeFormatter
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Marshaller
@@ -25,8 +26,8 @@ import kotlin.system.exitProcess
 class CSVParser(private val originalDirectory: String, private val destinationDirectoryPath: String) {
     private val destinationDirectory = File(destinationDirectoryPath)
     private val directory = File(originalDirectory)
-    private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("dd_mm_yyyy")
-    private val now: LocalDateTime = LocalDateTime.now()
+    //private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("dd_mm_yyyy")
+    //private val now: LocalDateTime = LocalDateTime.now()
 
     fun parse(): Int {
         if (originalDirectory != "${System.getProperty("user.dir")}${File.separator}data") {
@@ -66,6 +67,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
                     println("File ${file.name} cannot be read.")
                 } else {
                     if (file.name == "modelo_residuos_2021.csv") {
+                        parseCSV(file)
                         parseXMLResiduos(file)
                         parseJSONResiduos(file)
                     } else if (file.name == "modelo_residuos_2021.csv") {
@@ -78,9 +80,21 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
         return exitCounter
     }
 
+    private fun parseCSV(file: File) {
+        val lines = file.readLines()
+        var text = ""
+        lines.forEach {
+            val line = CSVReader.noDoubleDelimiter(it, ";")
+            text = text.plus("${line}\n")
+        }
+        val writer = FileWriter(destinationDirectory)
+    }
+
     private fun parseJSONContenedores(file: File) {
         val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.name, ";"))
-        GsonBuilder().setPrettyPrinting().create().toJson(contenedoresListDTO)
+        val jsonText = GsonBuilder().setPrettyPrinting().create().toJson(contenedoresListDTO)
+        val writer = FileWriter(File("${destinationDirectoryPath}${File.separator}contenedores_varios_parsed.json"))
+        writer.write(jsonText)
     }
 
     @Throws(JAXBException::class)
@@ -89,12 +103,14 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
         val jaxbContext: JAXBContext = JAXBContext.newInstance(ContenedoresListDTO::class.java)
         val marshaller = jaxbContext.createMarshaller()
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-        marshaller.marshal(contenedoresListDTO, destinationDirectory)
+        marshaller.marshal(contenedoresListDTO, File("${destinationDirectoryPath}${File.separator}contenedores_varios_parsed.xml"))
     }
 
     private fun parseJSONResiduos(file: File) {
         val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.name, ";"))
-        GsonBuilder().setPrettyPrinting().create().toJson(residuosListDTO)
+        val jsonText = GsonBuilder().setPrettyPrinting().create().toJson(residuosListDTO)
+        val writer = FileWriter(File("${destinationDirectoryPath}${File.separator}modelo_residuos_2021_parsed.json"))
+        writer.write(jsonText)
     }
 
     @Throws(JAXBException::class)
@@ -103,7 +119,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
         val jaxbContext: JAXBContext = JAXBContext.newInstance(ResiduosListDTO::class.java)
         val marshaller = jaxbContext.createMarshaller()
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-        marshaller.marshal(residuosListDTO, destinationDirectory)
+        marshaller.marshal(residuosListDTO, File("${destinationDirectoryPath}${File.separator}modelo_residuos_2021_parsed.xml"))
     }
 
     private fun createDirectory() {
