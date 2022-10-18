@@ -6,6 +6,7 @@ import java.io.FileWriter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 /**
@@ -21,10 +22,10 @@ import kotlin.system.exitProcess
 class CSVParser(private val originalDirectory: String, private val destinationDirectoryPath: String, private val delimiter: String) {
     private val destinationDirectory = File(destinationDirectoryPath)
     private val directory = File(originalDirectory)
-    private val dtf: DateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+    private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("dd_mm_yyyy")
     private val now: LocalDateTime = LocalDateTime.now()
 
-    fun parse() {
+    fun parse(): Int {
         createDirectory()
 
         if (!directory.exists()) {
@@ -39,20 +40,23 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
             exitProcess(99_999)
         }
 
+        var exitCounter = 0
+
         for (file in directory.listFiles()!!) {
             if (file.isFile && file.name.endsWith(".csv")) {
                 if (!file.canRead()) {
                     println("File ${file.name} cannot be read.")
-                    exitProcess(1711)
+                } else {
+                    val header = getHeaderData(file, delimiter)
+                    val data = getData(file, delimiter)
+                    exitCounter += parseCSV(file.nameWithoutExtension, header, data)
+                    val headerAndData = getHeaderAndData(header, data, delimiter)
+                    exitCounter += parseXML(file.nameWithoutExtension, headerAndData)
+                    exitCounter += parseJSON(file.nameWithoutExtension, headerAndData)
                 }
-                val header = getHeaderData(file, delimiter)
-                val data = getData(file, delimiter)
-                parseCSV(file.nameWithoutExtension, header, data)
-                val headerAndData = getHeaderAndData(header, data, delimiter)
-                parseXML(file.nameWithoutExtension, headerAndData)
-                parseJSON(file.nameWithoutExtension, headerAndData)
             }
         }
+        return exitCounter
     }
 
     private fun getHeaderAndData(header: List<String>, data: List<String>, delimiter: String): Map<String, List<String>> {
@@ -96,26 +100,34 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
     }
 
     private fun createDirectory() {
-        if (!destinationDirectory.isDirectory) {
-            println("$destinationDirectoryPath is not a directory.")
-            exitProcess(1707)
-        } else if (destinationDirectory.exists()) {
-            println("This directory already exists, do you want to overwrite it? [Y/N]")
-            var result = ""
-            while (!(result.contentEquals("y")) && !(result.contentEquals("n"))) {
-                result = readLine().toString()
-            }
-            if (result.contentEquals("n")) {
-                println("Exiting program.")
-                exitProcess(0)
+        if (destinationDirectory.exists()) {
+            if (!destinationDirectory.isDirectory) {
+                println("$destinationDirectoryPath is not a directory.")
+                exitProcess(1707)
             } else {
-                val deleted = destinationDirectory.delete()
-                if (!deleted) {
-                    println("Unable to delete ${destinationDirectory.name}")
-                    exitProcess(1708)
+                println("This directory already exists, do you want to overwrite it? [Y/N]")
+                var result = ""
+                while (!(result.contentEquals("y")) && !(result.contentEquals("n"))) {
+                    result = readLine().toString()
                 }
-                else {
-                    createDirectory()
+                if (result.contentEquals("n")) {
+                    println("Exiting program.")
+                    exitProcess(0)
+                } else {
+                    var deleted = false
+                    if (destinationDirectory.listFiles()?.isNotEmpty() == true) {
+                        for (file in destinationDirectory.listFiles()!!) {
+                            file.delete()
+                        }
+                    }
+                    deleted = destinationDirectory.delete()
+                    if (!deleted) {
+                        println("Unable to delete ${destinationDirectory.name}")
+                        exitProcess(1708)
+                    }
+                    else {
+                        createDirectory()
+                    }
                 }
             }
         } else {
@@ -123,72 +135,96 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
         }
     }
 
-    private fun parseCSV(originalCSV: String, header: List<String>, data: List<String>) {
+    private fun parseCSV(originalCSV: String, header: List<String>, data: List<String>): Int {
         val newCSVfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.csv")
 
-        val writer = FileWriter(newCSVfile)
-        writer.write(generateCSV(header, data))
+        return if (newCSVfile.exists()) {
+            if (newCSVfile.canWrite()) {
+                val writer = FileWriter(newCSVfile)
+                writer.write(generateCSV(header, data))
+                0
+            } else 1
+        } else {
+            val writer = FileWriter(newCSVfile)
+            writer.write(generateCSV(header, data))
+            0
+        }
     }
 
     private fun generateCSV(header: List<String>, data: List<String>): String {
-        val text = ""
+        var text = ""
         for (item in header) {
             if (item != header.last()) {
-                text.plus("$item;")
-            } else text.plus("$item\n")
+                text = text.plus("$item;")
+            } else text = text.plus("$item\n")
         }
         for (item in data) {
             if (item != data.last()) {
-                text.plus("$item\n")
-            } else text.plus(item)
+                text = text.plus("$item\n")
+            } else text = text.plus(item)
         }
         return text
     }
 
-    private fun parseXML(originalCSV: String, headerData: Map<String, List<String>>) {
+    private fun parseXML(originalCSV: String, headerData: Map<String, List<String>>): Int {
         val newXMLfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.xml")
 
-        if (newXMLfile.canWrite()) {
+        return if (newXMLfile.exists()) {
+            if (newXMLfile.canWrite()) {
+                val writer = FileWriter(newXMLfile)
+                writer.write(generateXML(headerData, originalCSV))
+                0
+            } else 1
+        } else {
             val writer = FileWriter(newXMLfile)
             writer.write(generateXML(headerData, originalCSV))
+            0
         }
     }
 
     private fun generateXML(headerData: Map<String, List<String>>, originalCSV: String): String {
-        val text = "<?xml version = \"1.0\" encoding = \"UTF-8\"?>"
-        text.plus("\n<${originalCSV}>")
+        var text = "<?xml version = \"1.0\" encoding = \"UTF-8\"?>"
+        text = text.plus("\n<${originalCSV}>")
         for (item in headerData) {
-            text.plus("\n   <${item.key}_list>")
+            text = text.plus("\n   <${item.key}_list>")
             for (index in headerData.values.indices) {
-                text.plus("\n      <${item.key} number=\"${index}\">${headerData.values.toList()[index]}</${item.key}>")
+                text = text.plus("\n      <${item.key} number=\"${index}\">${item.value[index]}</${item.key}>")
             }
-            text.plus("\n   </${item.key}_list>")
+            text = text.plus("\n   </${item.key}_list>")
         }
-        text.plus("\n</${originalCSV}>")
+        text = text.plus("\n</${originalCSV}>")
         return text
     }
 
-    private fun parseJSON(originalCSV: String, headerData: Map<String, List<String>>) {
+    private fun parseJSON(originalCSV: String, headerData: Map<String, List<String>>): Int {
         val newJSONfile = File("${destinationDirectoryPath}${File.separator}${originalCSV}_parsed_${dtf.format(now)}.json")
 
-        if (newJSONfile.canWrite()) {
+        return if (newJSONfile.exists()) {
+            if (newJSONfile.canWrite()) {
+                val writer = FileWriter(newJSONfile)
+                writer.write(generateJSON(headerData, originalCSV))
+                0
+            } else 1
+        } else {
             val writer = FileWriter(newJSONfile)
             writer.write(generateJSON(headerData, originalCSV))
+            0
         }
     }
 
     private fun generateJSON(headerData: Map<String, List<String>>, originalCSV: String): String {
-        val text = "{"
-        text.plus("\n   \"${originalCSV}\" : {")
+        var text = "{"
+        text = text.plus("\n   \"${originalCSV}\" : {")
         for (item in headerData) {
-            text.plus("\n      \"${item.key}_list\" : {")
+            text = text.plus("\n      \"${item.key}_list\" : {")
             for (index in headerData.values.indices) {
-                text.plus("\n         \"${item.key} number ${index}\" : \"${headerData.values.toList()[index]}\",")
+                text =
+                    text.plus("\n         \"${item.key} number ${index}\" : \"${item.value[index]}\",")
             }
-            text.plus("\n      }")
+            text = text.plus("\n      }")
         }
-        text.plus("\n   }")
-        text.plus("\n}")
+        text = text.plus("\n   }")
+        text = text.plus("\n}")
         return text
     }
 }

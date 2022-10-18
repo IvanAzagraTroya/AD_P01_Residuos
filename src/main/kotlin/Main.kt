@@ -1,17 +1,27 @@
-
+import lectores.CSVReader
+import log.BitacoraCreator
 import model.Contenedor
+import model.Ejecucion
 import model.Residuos
-import model.readCSVContenedores
-import model.readCSVResiduos
+import model.TipoOpcion
+//import model.readCSVContenedores
+//import model.readCSVResiduos
 import parsers.CSVParser
 import java.io.File
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    val inicioEjecucion = System.currentTimeMillis()
+    val currentExecution: Ejecucion
+
+    //val pruebaArgs = arrayOf("parser",
+    //    "${System.getProperty("user.dir")}${File.separator}data",
+    //    "${System.getProperty("user.dir")}${File.separator}data2")
+
+    //if (pruebaArgs.size != 3 && pruebaArgs.size != 4) {
     if (args.size != 3 && args.size != 4) {
-        println("Invalid number of arguments.")
-        println(
-            """
+        println("Invalid number of arguments. [${args.size}]")
+        println("""
             Possible arguments are:
             parser [directorio_origen] [directorio_destino]
             resumen [directorio_origen] [directorio_destino]
@@ -20,6 +30,8 @@ fun main(args: Array<String>) {
         )
         exitProcess(1)
     }
+
+    //if (pruebaArgs[0] != "parser" && pruebaArgs[0] != "resumen") {
     if (args[0] != "parser" && args[0] != "resumen") {
         println("Invalid option")
         println(
@@ -31,23 +43,46 @@ fun main(args: Array<String>) {
         )
         exitProcess(2)
     }
+
+    //if (pruebaArgs.size == 3) {
+    //    val origen = File(pruebaArgs[1])
+    //    val destino = File(pruebaArgs[2])
     if (args.size == 3) {
         val origen = File(args[1])
         val destino = File(args[2])
-
-        if (!origen.isDirectory || !destino.isDirectory) {
-            println("One or both of the specified urls is not a directory.")
-            exitProcess(3)
+        if (origen.exists()) {
+            if (!origen.isDirectory) {
+                println("$origen is not a directory.")
+                exitProcess(3)
+            }
+        }
+        if (destino.exists()) {
+            if (!destino.isDirectory) {
+                println("$destino is not a directory.")
+                exitProcess(3)
+            }
         }
     }
+
+    //if (pruebaArgs.size == 4) {
+    //    val origen = File(pruebaArgs[2])
+    //    val destino = File(pruebaArgs[3])
     if (args.size == 4) {
         val origen = File(args[2])
         val destino = File(args[3])
-
-        if (!origen.isDirectory || !destino.isDirectory) {
-            println("One or both of the specified urls is not a directory.")
-            exitProcess(4)
+        if (origen.exists()) {
+            if (!origen.isDirectory) {
+                println("$origen is not a directory.")
+                exitProcess(4)
+            }
         }
+        if (destino.exists()) {
+            if (!destino.isDirectory) {
+                println("$destino is not a directory.")
+                exitProcess(4)
+            }
+        }
+        //if (pruebaArgs[0] != "resumen") {
         if (args[0] != "resumen") {
             println(
                 """
@@ -63,16 +98,23 @@ fun main(args: Array<String>) {
         }
     }
 
+    //if (pruebaArgs.size == 3 && pruebaArgs[0] == "parser") {
     if (args.size == 3 && args[0] == "parser") {
         println("Please type the delimiter of the CSV files.")
         val delimiter = readLine().toString()
+        //val parser = CSVParser(pruebaArgs[1], pruebaArgs[2], delimiter)
         val parser = CSVParser(args[1], args[2], delimiter)
-        parser.parse()
+        currentExecution = if (parser.parse() != 0) {
+            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, true)
+        } else {
+            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, false)
+        }
+        BitacoraCreator.saveIntoBitacora(currentExecution)
     }
 
     if (args.size == 3 && args[0] == "resumen") {
-        val listResiduos = readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
-        val listContenedores = readCSVContenedores(File("${args[2]}${File.separator}contenedores_varios.csv"), ";")
+        val listResiduos = CSVReader.readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
+        val listContenedores = CSVReader.readCSVContenedores("${args[1]}${File.separator}contenedores_varios.csv", ";")
 
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
         // yo te dejo creadas aqui las listas de objetos que necesitas.
@@ -80,8 +122,8 @@ fun main(args: Array<String>) {
     }
 
     if (args.size == 4) {
-        val listResiduos = readCSVResiduos("${args[2]}${File.separator}modelo_residuos_2021.csv", ";")
-        val listContenedores = readCSVContenedores(File("${args[3]}${File.separator}contenedores_varios.csv"), ";")
+        val listResiduos = CSVReader.readCSVResiduos("${args[2]}${File.separator}modelo_residuos_2021.csv", ";")
+        val listContenedores = CSVReader.readCSVContenedores("${args[2]}${File.separator}contenedores_varios.csv", ";")
 
         val filteredResiduosList: List<Residuos> =
             listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == args[1].uppercase() }.toList()
