@@ -3,6 +3,10 @@ package parsers
 import DTO.ContenedoresListDTO
 import DTO.ResiduosListDTO
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import lectores.CSVReader
 import java.io.File
 import java.io.FileWriter
@@ -67,12 +71,53 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
                     println("File ${file.name} cannot be read.")
                 } else {
                     if (file.name == "modelo_residuos_2021.csv") {
-                        parseCSV(file)
-                        parseXMLResiduos(file)
-                        parseJSONResiduos(file)
-                    } else if (file.name == "modelo_residuos_2021.csv") {
-                        parseXMLContenedores(file)
-                        parseJSONContenedores(file)
+                        println("procesando residuos")
+                        runBlocking {
+                            val parsedCSV = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a csv")
+                                parseCSV(file)
+                                println("${file.name} parseado a csv")
+                            }
+                            val parsedXML = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a xml")
+                                parseXMLResiduos(file)
+                                println("${file.name} parseado a xml")
+                            }
+                            val parsedJSON = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a json")
+                                parseJSONResiduos(file)
+                                println("${file.name} parseado a json")
+                            }
+
+                            parsedCSV.join()
+                            parsedXML.join()
+                            parsedJSON.join()
+                            println("residuos procesados")
+                        }
+                    } else if (file.name == "contenedores_varios.csv") {
+                        println("procesando contenedores")
+                        runBlocking {
+                            val parsedCSV = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a csv")
+                                parseCSV(file)
+                                println("${file.name} parseado a csv")
+                            }
+                            val parsedXML = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a xml")
+                                parseXMLContenedores(file)
+                                println("${file.name} parseado a xml")
+                            }
+                            val parsedJSON = launch(Dispatchers.IO) {
+                                println("parseando ${file.name} a json")
+                                parseJSONContenedores(file)
+                                println("${file.name} parseado a json")
+                            }
+
+                            parsedCSV.join()
+                            parsedXML.join()
+                            parsedJSON.join()
+                            println("contenedores procesados")
+                        }
                     }
                 }
             }
@@ -87,11 +132,12 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
             val line = CSVReader.noDoubleDelimiter(it, ";")
             text = text.plus("${line}\n")
         }
-        val writer = FileWriter(destinationDirectory)
+        val writer = FileWriter("${destinationDirectoryPath}${File.separator}${file.nameWithoutExtension}_parsed.csv")
+        writer.write(text)
     }
 
     private fun parseJSONContenedores(file: File) {
-        val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.name, ";"))
+        val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.absolutePath, ";"))
         val jsonText = GsonBuilder().setPrettyPrinting().create().toJson(contenedoresListDTO)
         val writer = FileWriter(File("${destinationDirectoryPath}${File.separator}contenedores_varios_parsed.json"))
         writer.write(jsonText)
@@ -99,7 +145,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
 
     @Throws(JAXBException::class)
     private fun parseXMLContenedores(file: File) {
-        val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.name, ";"))
+        val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.absolutePath, ";"))
         val jaxbContext: JAXBContext = JAXBContext.newInstance(ContenedoresListDTO::class.java)
         val marshaller = jaxbContext.createMarshaller()
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
@@ -107,7 +153,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
     }
 
     private fun parseJSONResiduos(file: File) {
-        val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.name, ";"))
+        val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.absolutePath, ";"))
         val jsonText = GsonBuilder().setPrettyPrinting().create().toJson(residuosListDTO)
         val writer = FileWriter(File("${destinationDirectoryPath}${File.separator}modelo_residuos_2021_parsed.json"))
         writer.write(jsonText)
@@ -115,7 +161,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
 
     @Throws(JAXBException::class)
     private fun parseXMLResiduos(file: File) {
-        val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.name, ";"))
+        val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.absolutePath, ";"))
         val jaxbContext: JAXBContext = JAXBContext.newInstance(ResiduosListDTO::class.java)
         val marshaller = jaxbContext.createMarshaller()
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
@@ -155,6 +201,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
             }
         } else {
             destinationDirectory.mkdirs()
+            //destinationDirectory.setWritable(true)
         }
     }
 }

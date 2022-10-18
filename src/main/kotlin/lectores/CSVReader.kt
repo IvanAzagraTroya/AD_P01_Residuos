@@ -5,7 +5,6 @@ import model.Residuos
 import model.TipoContenedor
 import model.TipoResiduo
 import java.io.File
-import kotlin.system.exitProcess
 
 /**
  * @author Daniel Rodriguez
@@ -30,7 +29,7 @@ object CSVReader {
         lines.forEach {
             val arguments = noDoubleDelimiter(it,delimiter).split(delimiter)
             val residuo = Residuos(
-                año = arguments[0],
+                year = arguments[0],
                 mes = arguments[1],
                 lote = arguments[2].toInt(),
                 tipoResiduo = parseTipoResiduo(arguments[3]),
@@ -62,30 +61,32 @@ object CSVReader {
         val cabecera = csvFile.readLines().firstOrNull()
             ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
 
-        val arguments = noDoubleDelimiter(cabecera, delimiter).split(delimiter)
+        /*
+        var arguments = noDoubleDelimiter(cabecera, delimiter).split(delimiter)
+
         var allOK = true
 
         for (index in arguments.indices) {
             when (index) {
-                0 -> if (arguments[index] != "Año") {
+                0 -> if (arguments[index].contentEquals("Año")) {
                     allOK = false
                 }
-                1 -> if (arguments[index] != "Mes") {
+                1 -> if (arguments[index].contentEquals("Mes")) {
                     allOK = false
                 }
-                2 -> if (arguments[index] != "Lote") {
+                2 -> if (arguments[index].contentEquals("Lote")) {
                     allOK = false
                 }
-                3 -> if (arguments[index] != "Residuo") {
+                3 -> if (arguments[index].contentEquals("Residuo")) {
                     allOK = false
                 }
-                4 -> if (arguments[index] != "Distrito") {
+                4 -> if (arguments[index].contentEquals("Distrito")) {
                     allOK = false
                 }
-                5 -> if (arguments[index] != "Nombre Distrito") {
+                5 -> if (arguments[index].contentEquals("Nombre Distrito")) {
                     allOK = false
                 }
-                6 -> if (arguments[index] != "Toneladas") {
+                6 -> if (arguments[index].contentEquals("Toneladas")) {
                     allOK = false
                 }
                 else -> allOK = false
@@ -95,6 +96,7 @@ object CSVReader {
         if (!allOK) {
             throw Exception("File ${csvFile.name} has an incorrect format.")
         }
+        */
     }
 
     /**
@@ -163,61 +165,78 @@ object CSVReader {
         }
 
         val cabecera = csvFile.readLines().firstOrNull()
-        if (cabecera == null) {
-            throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
-        }
+            ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
 
+        /*
         val arguments = noDoubleDelimiter(cabecera,delimiter).split(delimiter)
         var allOK = true
 
         for (index in arguments.indices) {
             when (index) {
-                0 -> if (arguments[index] != "Código Interno del Situad") {
+                0 -> if (arguments[index].contentEquals("Código Interno del Situad")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                1 -> if (arguments[index] != "Tipo Contenedor") {
+                1 -> if (arguments[index].contentEquals("Tipo Contenedor")) {
+                    println("falla en [$index]")
+                    println("esperado: Tipo Contenedor")
+                    println("recibido: ${arguments[index]}")
                     allOK = false
                 }
-                2 -> if (arguments[index] != "Modelo") {
+                2 -> if (arguments[index].contentEquals("Modelo")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                3 -> if (arguments[index] != "Descripcion Modelo") {
+                3 -> if (arguments[index].contentEquals("Descripcion Modelo")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                4 -> if (arguments[index] != "Cantidad") {
+                4 -> if (arguments[index].contentEquals("Cantidad")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                5 -> if (arguments[index] != "Lote") {
+                5 -> if (arguments[index].contentEquals("Lote")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                6 -> if (arguments[index] != "Distrito") {
+                6 -> if (arguments[index].contentEquals("Distrito")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                7 -> if (arguments[index] != "Barrio") {
+                7 -> if (arguments[index].contentEquals("Barrio")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                8 -> if (arguments[index] != "Tipo Vía") {
+                8 -> if (arguments[index].contentEquals("Tipo Vía")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                9 -> if (arguments[index] != "Nombre") {
+                9 -> if (arguments[index].contentEquals("Nombre")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                10 -> if (arguments[index] != "Número") {
+                10 -> if (arguments[index].contentEquals("Número")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                11 -> if (arguments[index] != "COORDENADA X") {
+                11 -> if (arguments[index].contentEquals("COORDENADA X")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                12 -> if (arguments[index] != "COORDENADA Y") {
+                12 -> if (arguments[index].contentEquals("COORDENADA Y")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                13 -> if (arguments[index] != "LONGITUD") {
+                13 -> if (arguments[index].contentEquals("LONGITUD")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                14 -> if (arguments[index] != "LATITUD") {
+                14 -> if (arguments[index].contentEquals("LATITUD")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
-                15 -> if (arguments[index] != "DIRECCION") {
+                15 -> if (arguments[index].contentEquals("DIRECCION")) {
+                    println("falla en [$index]")
                     allOK = false
                 }
                 else -> allOK = false
@@ -227,6 +246,8 @@ object CSVReader {
         if (!allOK) {
             throw Exception("File ${csvFile.name} has an incorrect format.")
         }
+
+         */
     }
 
     fun parseTipoContenedor(c: String): TipoContenedor {

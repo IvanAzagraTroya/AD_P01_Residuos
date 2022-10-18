@@ -1,11 +1,16 @@
 package model
 
+import javax.xml.bind.annotation.XmlAccessType
+import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
+import javax.xml.bind.annotation.XmlRootElement
 
+@XmlRootElement(name = "residuos_data")
+@XmlAccessorType(XmlAccessType.FIELD)
 class Residuos() {
     constructor(
         lote: Int,
-        año: String,
+        year: String,
         mes: String,
         tipoResiduo: TipoResiduo,
         distrito: Int,
@@ -13,7 +18,7 @@ class Residuos() {
         toneladas: Double
     ): this() {
         this.lote = lote
-        this.año = año
+        this.year = year
         this.mes = mes
         this.tipoResiduo = tipoResiduo
         this.distrito = distrito
@@ -24,7 +29,7 @@ class Residuos() {
     @XmlAttribute(name = "lote")
     var lote: Int = 0
     @XmlAttribute(name = "year")
-    var año: String = ""
+    var year: String = ""
     @XmlAttribute(name = "month")
     var mes: String = ""
     var tipoResiduo: TipoResiduo = TipoResiduo.RESTO
