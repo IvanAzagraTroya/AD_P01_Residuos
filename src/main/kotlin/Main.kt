@@ -4,6 +4,8 @@ import model.Contenedor
 import model.Ejecucion
 import model.Residuos
 import model.TipoOpcion
+//import model.readCSVContenedores
+//import model.readCSVResiduos
 import parsers.CSVParser
 import java.io.File
 import kotlin.system.exitProcess
@@ -24,18 +26,21 @@ fun main(args: Array<String>) {
             parser [directorio_origen] [directorio_destino]
             resumen [directorio_origen] [directorio_destino]
             resumen [distrito] [directorio_origen] [directorio_destino]
-        """.trimMargin())
+        """.trimMargin()
+        )
         exitProcess(1)
     }
 
     //if (pruebaArgs[0] != "parser" && pruebaArgs[0] != "resumen") {
     if (args[0] != "parser" && args[0] != "resumen") {
         println("Invalid option")
-        println("""
+        println(
+            """
             Valid options are:
             parser
             resumen
-        """.trimMargin())
+        """.trimMargin()
+        )
         exitProcess(2)
     }
 
@@ -79,14 +84,16 @@ fun main(args: Array<String>) {
         }
         //if (pruebaArgs[0] != "resumen") {
         if (args[0] != "resumen") {
-            println("""
+            println(
+                """
                 Option "resumen" is the only one which admits a total of 4 parameters.
                 
                 Valid arguments are:
                 parser [directorio_origen] [directorio_destino]
                 resumen [directorio_origen] [directorio_destino]
                 resumen [distrito] [directorio_origen] [directorio_destino]
-            """.trimIndent())
+            """.trimIndent()
+            )
             exitProcess(5)
         }
     }
@@ -118,33 +125,13 @@ fun main(args: Array<String>) {
         val listResiduos = CSVReader.readCSVResiduos("${args[2]}${File.separator}modelo_residuos_2021.csv", ";")
         val listContenedores = CSVReader.readCSVContenedores("${args[2]}${File.separator}contenedores_varios.csv", ";")
 
-        val filteredResiduosList: List<Residuos> = listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == args[1].uppercase() }.toList()
-        val filteredContenedoresList: List<Contenedor> = listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
+        val filteredResiduosList: List<Residuos> =
+            listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == args[1].uppercase() }.toList()
+        val filteredContenedoresList: List<Contenedor> =
+            listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
 
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
         // yo te dejo creadas aqui las listas de objetos que necesitas ya filtradas por distrito. Usa las filteredLists.
         // Este es el metodo para cuando se quiere un HTML ***FILTRADO PARA UNA CIUDAD ESPECIFICA***
     }
-
-
-    /*
-    val listResiduos = CSVReader.readCSVResiduos("data${File.separator}modelo_residuos_2021.csv", ";")
-    val listContenedores = CSVReader.readCSVContenedores("data${File.separator}contenedores_varios.csv", ";")
-
-    listContenedores.forEach {
-        println(it.toString())
-    }
-    listResiduos.forEach {
-        println(it.toString())
-    }
-
-//    println(listResiduos.size)
-//    println(listContenedores.size)
-
-
-
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
-     */
 }
