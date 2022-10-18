@@ -18,9 +18,9 @@ import kotlin.math.roundToInt
  * Clase encargada de calcular los datos de los CSV
  */
 class DataProcessor(contenedoreData: List<Contenedor>, residuoData: List<Residuos>) {
-
     fun contenedorData(contenedoresData: List<Contenedor>) {
-//        val data = content.toDataFrame()
+
+    //        val data = content.toDataFrame()
 
         // Tipos de contenedores
         val organica = contenedoresData.filter { it.tipoContenedor== TipoContenedor.ORGANICA }
@@ -136,28 +136,28 @@ class DataProcessor(contenedoreData: List<Contenedor>, residuoData: List<Residuo
     }
 
     // Esto no sé si está bien porque no me cuadra, hay que revisar
-//    fun getMediaPorDistrito(distrito: String) {
-//        println("Media de contenedores en $distrito")
-//        val organicaDistrito = contenedoresData.filter { it.tipoContenedor== TipoContenedor.ORGANICA }
-//            .groupingBy{distrito}.eachCount()
-//
-//        val restoDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.RESTO }
-//            .groupingBy { distrito }.eachCount()
-//        val envasesDistrito = contenedoresData.filter  { it.tipoContenedor == TipoContenedor.ENVASES }
-//            .groupingBy{distrito}.eachCount().size
-//        val vidrioDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.VIDRIO }
-//            .groupingBy { distrito.uppercase(Locale.getDefault()) }.eachCount().size
-//        val papelCartonDistrito = contenedoresData.filter { it.distrito.equals(distrito.uppercase(Locale.getDefault())) }
-//            .groupingBy { it.tipoContenedor == TipoContenedor.PAPEL_Y_CARTON }.eachCount().size
-//        println("Media de contenedores orgánicos en el distrito $organicaDistrito")
-//        println("Media de contenedores de restos en el distrito $restoDistrito")
-//        println("Media de contenedores de envases en el distrito $envasesDistrito")
-//        println("Media de contenedores de vidrio en el distrito $vidrioDistrito")
-//        println("Media de contenedores de papel y cartón en el distrito $papelCartonDistrito")
-//
-////        println("Suma temporal para pruebas de las medias: organicaDistrito ${restoDistrito + envasesDistrito + vidrioDistrito + papelCartonDistrito}")
-//
-//    }
+    //    fun getMediaPorDistrito(distrito: String) {
+    //        println("Media de contenedores en $distrito")
+    //        val organicaDistrito = contenedoresData.filter { it.tipoContenedor== TipoContenedor.ORGANICA }
+    //            .groupingBy{distrito}.eachCount()
+    //
+    //        val restoDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.RESTO }
+    //            .groupingBy { distrito }.eachCount()
+    //        val envasesDistrito = contenedoresData.filter  { it.tipoContenedor == TipoContenedor.ENVASES }
+    //            .groupingBy{distrito}.eachCount().size
+    //        val vidrioDistrito = contenedoresData.filter { it.tipoContenedor == TipoContenedor.VIDRIO }
+    //            .groupingBy { distrito.uppercase(Locale.getDefault()) }.eachCount().size
+    //        val papelCartonDistrito = contenedoresData.filter { it.distrito.equals(distrito.uppercase(Locale.getDefault())) }
+    //            .groupingBy { it.tipoContenedor == TipoContenedor.PAPEL_Y_CARTON }.eachCount().size
+    //        println("Media de contenedores orgánicos en el distrito $organicaDistrito")
+    //        println("Media de contenedores de restos en el distrito $restoDistrito")
+    //        println("Media de contenedores de envases en el distrito $envasesDistrito")
+    //        println("Media de contenedores de vidrio en el distrito $vidrioDistrito")
+    //        println("Media de contenedores de papel y cartón en el distrito $papelCartonDistrito")
+    //
+    ////        println("Suma temporal para pruebas de las medias: organicaDistrito ${restoDistrito + envasesDistrito + vidrioDistrito + papelCartonDistrito}")
+    //
+    //    }
 
     fun graficoToneladasDistrito(distrito: String, totalResiduoDistrito: Map<Int, List<Residuos>>, residuoData: List<Residuos>) { // Total residuo tiene que ser un map
         // Duplicado por el momento en línea 128
@@ -231,9 +231,10 @@ class DataProcessor(contenedoreData: List<Contenedor>, residuoData: List<Residuo
 
     fun graficoToneladasMes(residuoData: List<Residuos>) {
         var agrupado = residuoData.groupBy { "distrito" }.filter {  }//aggregate(
-//            (residuoData.groupBy { it.distrito }.map {it.value.maxOf { it.toneladas }.roundToInt() }) into "Máximo"
-//                (residuoData.groupBy {  }) into "as"
-//        )
+    //            (residuoData.groupBy { it.distrito }.map {it.value.maxOf { it.toneladas }.roundToInt() }) into "Máximo"
+    //                (residuoData.groupBy {  }) into "as"
+    //        )
     }
+
 
 }
