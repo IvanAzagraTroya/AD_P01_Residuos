@@ -12,12 +12,12 @@ fun main(args: Array<String>) {
     val inicioEjecucion = System.currentTimeMillis()
     val currentExecution: Ejecucion
 
-    val pruebaArgs = arrayOf("parser",
-        "${System.getProperty("user.dir")}${File.separator}data",
-        "${System.getProperty("user.dir")}${File.separator}data2")
+    //val pruebaArgs = arrayOf("parser",
+    //    "${System.getProperty("user.dir")}${File.separator}data",
+    //    "${System.getProperty("user.dir")}${File.separator}data2")
 
-    if (pruebaArgs.size != 3 && pruebaArgs.size != 4) {
-    //if (args.size != 3 && args.size != 4) {
+    //if (pruebaArgs.size != 3 && pruebaArgs.size != 4) {
+    if (args.size != 3 && args.size != 4) {
         println("Invalid number of arguments. [${args.size}]")
         println("""
             Possible arguments are:
@@ -28,8 +28,8 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    if (pruebaArgs[0] != "parser" && pruebaArgs[0] != "resumen") {
-    //if (args[0] != "parser" && args[0] != "resumen") {
+    //if (pruebaArgs[0] != "parser" && pruebaArgs[0] != "resumen") {
+    if (args[0] != "parser" && args[0] != "resumen") {
         println("Invalid option")
         println("""
             Valid options are:
@@ -39,12 +39,12 @@ fun main(args: Array<String>) {
         exitProcess(2)
     }
 
-    if (pruebaArgs.size == 3) {
-        val origen = File(pruebaArgs[1])
-        val destino = File(pruebaArgs[2])
-    //if (args.size == 3) {
-    //    val origen = File(args[1])
-    //    val destino = File(args[2])
+    //if (pruebaArgs.size == 3) {
+    //    val origen = File(pruebaArgs[1])
+    //    val destino = File(pruebaArgs[2])
+    if (args.size == 3) {
+        val origen = File(args[1])
+        val destino = File(args[2])
         if (origen.exists()) {
             if (!origen.isDirectory) {
                 println("$origen is not a directory.")
@@ -59,12 +59,12 @@ fun main(args: Array<String>) {
         }
     }
 
-    if (pruebaArgs.size == 4) {
-        val origen = File(pruebaArgs[2])
-        val destino = File(pruebaArgs[3])
-    //if (args.size == 4) {
-    //    val origen = File(args[2])
-    //    val destino = File(args[3])
+    //if (pruebaArgs.size == 4) {
+    //    val origen = File(pruebaArgs[2])
+    //    val destino = File(pruebaArgs[3])
+    if (args.size == 4) {
+        val origen = File(args[2])
+        val destino = File(args[3])
         if (origen.exists()) {
             if (!origen.isDirectory) {
                 println("$origen is not a directory.")
@@ -77,8 +77,8 @@ fun main(args: Array<String>) {
                 exitProcess(4)
             }
         }
-        if (pruebaArgs[0] != "resumen") {
-        //if (args[0] != "resumen") {
+        //if (pruebaArgs[0] != "resumen") {
+        if (args[0] != "resumen") {
             println("""
                 Option "resumen" is the only one which admits a total of 4 parameters.
                 
@@ -91,23 +91,23 @@ fun main(args: Array<String>) {
         }
     }
 
-    if (pruebaArgs.size == 3 && pruebaArgs[0] == "parser") {
-    //if (args.size == 3 && args[0] == "parser") {
+    //if (pruebaArgs.size == 3 && pruebaArgs[0] == "parser") {
+    if (args.size == 3 && args[0] == "parser") {
         println("Please type the delimiter of the CSV files.")
         val delimiter = readLine().toString()
-        val parser = CSVParser(pruebaArgs[1], pruebaArgs[2], delimiter)
-        //val parser = CSVParser(args[1], args[2], delimiter)
-        if (parser.parse() != 0) {
-            currentExecution = Ejecucion(TipoOpcion.PARSER, inicioEjecucion, true)
+        //val parser = CSVParser(pruebaArgs[1], pruebaArgs[2], delimiter)
+        val parser = CSVParser(args[1], args[2], delimiter)
+        currentExecution = if (parser.parse() != 0) {
+            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, true)
         } else {
-            currentExecution = Ejecucion(TipoOpcion.PARSER, inicioEjecucion, false)
+            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, false)
         }
         BitacoraCreator.saveIntoBitacora(currentExecution)
     }
-/*
+
     if (args.size == 3 && args[0] == "resumen") {
         val listResiduos = CSVReader.readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
-        val listContenedores = CSVReader.readCSVContenedores("${args[2]}${File.separator}contenedores_varios.csv", ";")
+        val listContenedores = CSVReader.readCSVContenedores("${args[1]}${File.separator}contenedores_varios.csv", ";")
 
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
         // yo te dejo creadas aqui las listas de objetos que necesitas.
@@ -116,7 +116,7 @@ fun main(args: Array<String>) {
 
     if (args.size == 4) {
         val listResiduos = CSVReader.readCSVResiduos("${args[2]}${File.separator}modelo_residuos_2021.csv", ";")
-        val listContenedores = CSVReader.readCSVContenedores("${args[3]}${File.separator}contenedores_varios.csv", ";")
+        val listContenedores = CSVReader.readCSVContenedores("${args[2]}${File.separator}contenedores_varios.csv", ";")
 
         val filteredResiduosList: List<Residuos> = listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == args[1].uppercase() }.toList()
         val filteredContenedoresList: List<Contenedor> = listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
@@ -125,8 +125,6 @@ fun main(args: Array<String>) {
         // yo te dejo creadas aqui las listas de objetos que necesitas ya filtradas por distrito. Usa las filteredLists.
         // Este es el metodo para cuando se quiere un HTML ***FILTRADO PARA UNA CIUDAD ESPECIFICA***
     }
-
- */
 
 
     /*
