@@ -25,6 +25,9 @@ dependencies {
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin:3.2.0")
     implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
 
+    //gson
+    implementation("com.google.code.gson:gson:2.9.1")
+
 }
 
 tasks.test {

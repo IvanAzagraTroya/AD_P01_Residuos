@@ -2,6 +2,7 @@ package parsers
 
 import DTO.ContenedoresListDTO
 import DTO.ResiduosListDTO
+import com.google.gson.GsonBuilder
 import lectores.CSVReader
 import java.io.File
 import java.time.LocalDateTime
@@ -79,6 +80,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
 
     private fun parseJSONContenedores(file: File) {
         val contenedoresListDTO = ContenedoresListDTO(CSVReader.readCSVContenedores(file.name, ";"))
+        GsonBuilder().setPrettyPrinting().create().toJson(contenedoresListDTO)
     }
 
     @Throws(JAXBException::class)
@@ -92,6 +94,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
 
     private fun parseJSONResiduos(file: File) {
         val residuosListDTO = ResiduosListDTO(CSVReader.readCSVResiduos(file.name, ";"))
+        GsonBuilder().setPrettyPrinting().create().toJson(residuosListDTO)
     }
 
     @Throws(JAXBException::class)
