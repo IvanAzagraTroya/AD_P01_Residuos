@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
         println("Please type the delimiter of the CSV files.")
         val delimiter = readLine().toString()
         //val parser = CSVParser(pruebaArgs[1], pruebaArgs[2], delimiter)
-        val parser = CSVParser(args[1], args[2], delimiter)
+        val parser = CSVParser(args[1], args[2])
         currentExecution = if (parser.parse() != 0) {
             Ejecucion("parser", inicioEjecucion, true)
         } else {
