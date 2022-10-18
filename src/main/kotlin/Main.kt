@@ -3,9 +3,6 @@ import log.BitacoraCreator
 import model.Contenedor
 import model.Ejecucion
 import model.Residuos
-import model.TipoOpcion
-//import model.readCSVContenedores
-//import model.readCSVResiduos
 import parsers.CSVParser
 import java.io.File
 import kotlin.system.exitProcess
@@ -105,9 +102,9 @@ fun main(args: Array<String>) {
         //val parser = CSVParser(pruebaArgs[1], pruebaArgs[2], delimiter)
         val parser = CSVParser(args[1], args[2], delimiter)
         currentExecution = if (parser.parse() != 0) {
-            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, true)
+            Ejecucion("parser", inicioEjecucion, true)
         } else {
-            Ejecucion(TipoOpcion.PARSER, inicioEjecucion, false)
+            Ejecucion("parser", inicioEjecucion, false)
         }
         BitacoraCreator.saveIntoBitacora(currentExecution)
     }
