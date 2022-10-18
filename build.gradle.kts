@@ -28,6 +28,9 @@ dependencies {
     //gson
     implementation("com.google.code.gson:gson:2.9.1")
 
+    //coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
 }
 
 tasks.test {
