@@ -27,6 +27,13 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     private val contDataframe = contenedorData.toDataFrame()
     private val residuoDataframe = residuoData.toDataFrame()
 
+    lateinit var contenedoresDistrito: String
+    lateinit var mediaToneladasAnuales: String
+    lateinit var MaxMinMeanStd: String
+    lateinit var sumaRecogidoDistrito: String
+    lateinit var cantidadTipoRecogido: String
+
+
     fun dataToDataFrame() {
         if(!imagesPath.exists())
             imagesPath.mkdir()
@@ -35,16 +42,16 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
         residuoDataframe.schema().print()
 
         // Tipo de contenedor por distrito
-        val contenedoresDistrito = contDataframe.groupBy("tipoContenedor", "distrito").count().html()
+        contenedoresDistrito = contDataframe.groupBy("tipoContenedor", "distrito").count().html()
 
         // Jose Luis te he fallado no sé cómo hacer la media de contenedores por distrito
 
-        val mediaToneladasAnuales = residuoDataframe.groupBy("year", "nombreDistrito", "tipoResiduo")
+        mediaToneladasAnuales = residuoDataframe.groupBy("year", "nombreDistrito", "tipoResiduo")
             .aggregate {
                 mean("toneladas").roundToInt() into "Media de toneladas anuales por distrito"
             }.html()
 
-        val MaxMinMeanStd = residuoDataframe.groupBy("nombreDistrito","toneladas", "tipoResiduo", "year")
+        MaxMinMeanStd = residuoDataframe.groupBy("nombreDistrito","toneladas", "tipoResiduo", "year")
             .aggregate {
                 max("toneladas") into "Max toneladas"
                 min("toneladas") into "Min toneladas"
@@ -52,12 +59,12 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 std("toneladas") into "Desviacion toneladas"
             }.sortBy("nombreDistrito").html()
 
-        val sumaRecogidoDistrito = residuoDataframe.groupBy("nombreDistrito","toneladas", "year")
+        sumaRecogidoDistrito = residuoDataframe.groupBy("nombreDistrito","toneladas", "year")
             .aggregate {
                 sum("toneladas") into "Suma de toneladas recogidas"
             }.html()
 
-        val cantidadTipoRecogido = residuoDataframe.groupBy("nombreDistrito","tipoResiduo")
+        cantidadTipoRecogido = residuoDataframe.groupBy("nombreDistrito","tipoResiduo")
             .aggregate{
                 sum("toneladas") into "Cantidad de toneladas"
             }.html()
@@ -173,7 +180,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
 
                     </p>
 
-                    <h4>Media de las toneladas anuales de recogidas por cada tipo de basura agrupado por distrito: ${executionDTO.mediaToneladasAnuales}</h4>
+                    <h4>Media de las toneladas anuales de recogidas por cada tipo de basura agrupado por distrito: $mediaToneladasAnuales</h4>
 
                     <p>
                         <h4>Media de las toneladas mensuales de recogida por distrito</h4>

@@ -1,3 +1,4 @@
+/*
 package dataWorker
 
 import DTO.ExecutionDTO
@@ -8,11 +9,13 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 
+*/
 /**
  * @author Iván Azagra Troya y Daniel Rodríguez Muñoz
  * Clase generadora del template en el que se muestran los datos
  * @param executionDTO DTO utilizado para pasar los valores necesarios para rellenar el HTML
- */
+ *//*
+
 class TemplateGenerator(private val executionDTO: ExecutionDTO, private val destinationDirectory: String, private val initialExecutionTimeMillis: Long, districtName: String?) {
     private val processedPath: Path = if (districtName != null) {
         Paths.get("$destinationDirectory${File.separator}resumen_$districtName.html")
@@ -90,7 +93,8 @@ class TemplateGenerator(private val executionDTO: ExecutionDTO, private val dest
             }
         }
 
-        /*
+        */
+/*
                 <div id="nombres">
                     Html genetado por: <strong>Iván Azagra y Daniel Rodríguez</strong>
                 </div>
@@ -100,7 +104,8 @@ class TemplateGenerator(private val executionDTO: ExecutionDTO, private val dest
             </body>
             </html>
         """.trimIndent()
-         */
+         *//*
+
     }
 
-}
+}*/
