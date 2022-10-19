@@ -1,3 +1,4 @@
+import dataWorker.DataProcessor
 import lectores.CSVReader
 import log.BitacoraCreator
 import model.Contenedor
@@ -9,7 +10,7 @@ import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     val inicioEjecucion = System.currentTimeMillis()
-    val currentExecution: Ejecucion
+    var currentExecution: Ejecucion
 
     //val pruebaArgs = arrayOf("parser",
     //    "${System.getProperty("user.dir")}${File.separator}data",
@@ -97,11 +98,11 @@ fun main(args: Array<String>) {
 
     //if (pruebaArgs.size == 3 && pruebaArgs[0] == "parser") {
     if (args.size == 3 && args[0] == "parser") {
-        println("Please type the delimiter of the CSV files.")
-    ////    val delimiter = readLine().toString()
+        ////println("Please type the delimiter of the CSV files.")
+        ////val delimiter = readLine().toString()
         //val parser = CSVParser(pruebaArgs[1], pruebaArgs[2])
         val parser = CSVParser(args[1], args[2])
-        currentExecution = if (parser.parse() != 0) {
+        currentExecution = if (parser.parse() == 0) {
             Ejecucion("parser", inicioEjecucion, true)
         } else {
             Ejecucion("parser", inicioEjecucion, false)
@@ -109,24 +110,34 @@ fun main(args: Array<String>) {
         BitacoraCreator.saveIntoBitacora(currentExecution)
     }
 
+    //if (pruebaArgs.size == 3 && pruebaArgs[0] == "resumen") {
     if (args.size == 3 && args[0] == "resumen") {
+        //val listResiduos = CSVReader.readCSVResiduos("${pruebaArgs[1]}${File.separator}modelo_residuos_2021.csv", ";")
+        //val listContenedores = CSVReader.readCSVContenedores("${pruebaArgs[1]}${File.separator}contenedores_varios.csv", ";")
         val listResiduos = CSVReader.readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
         val listContenedores = CSVReader.readCSVContenedores("${args[1]}${File.separator}contenedores_varios.csv", ";")
 
+        val processor = DataProcessor(listContenedores, listResiduos)
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
         // yo te dejo creadas aqui las listas de objetos que necesitas.
         // Este es el metodo para cuando se quiere un HTML ***SIN FILTRAR POR CIUDAD***
     }
 
+    //if (pruebaArgs.size == 4) {
+        //val listResiduos = CSVReader.readCSVResiduos("${pruebaArgs[2]}${File.separator}modelo_residuos_2021.csv", ";")
+        //val listContenedores = CSVReader.readCSVContenedores("${pruebaArgs[2]}${File.separator}contenedores_varios.csv", ";")
     if (args.size == 4) {
         val listResiduos = CSVReader.readCSVResiduos("${args[2]}${File.separator}modelo_residuos_2021.csv", ";")
         val listContenedores = CSVReader.readCSVContenedores("${args[2]}${File.separator}contenedores_varios.csv", ";")
 
         val filteredResiduosList: List<Residuos> =
+            //listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == pruebaArgs[1].uppercase() }.toList()
             listResiduos.stream().filter { x -> x.nombreDistrito.uppercase() == args[1].uppercase() }.toList()
         val filteredContenedoresList: List<Contenedor> =
+            //listContenedores.stream().filter { x -> x.distrito.uppercase() == pruebaArgs[1].uppercase() }.toList()
             listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
 
+        val processor = DataProcessor(filteredContenedoresList, filteredResiduosList)
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
         // yo te dejo creadas aqui las listas de objetos que necesitas ya filtradas por distrito. Usa las filteredLists.
         // Este es el metodo para cuando se quiere un HTML ***FILTRADO PARA UNA CIUDAD ESPECIFICA***
