@@ -7,6 +7,10 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 import javax.xml.bind.annotation.XmlRootElement
 
+/**
+ * @author Daniel Rodriguez Muñoz
+ * Clase KOJO para el objeto de la ejecución
+ */
 @XmlRootElement(name = "execution_data")
 @XmlAccessorType(XmlAccessType.FIELD)
 class Ejecucion() {

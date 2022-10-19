@@ -3,6 +3,10 @@ package DTO
 import kotlinx.serialization.Serializable
 import model.TipoResiduo
 
+/**
+ * @author Iván Azagra Troya
+ * DTO de clase residuo
+ */
 @Serializable
 data class ResiduosDTO(
     val lote: Int,

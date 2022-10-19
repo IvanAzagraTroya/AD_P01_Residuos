@@ -9,6 +9,10 @@ import javax.xml.bind.JAXBException
 import javax.xml.bind.Marshaller
 import kotlin.Throws
 
+/**
+ * @author Daniel Rodriguez Muñoz
+ * Clase para llevar el control de la ejecución en el XML
+ */
 object BitacoraCreator {
     private val PATH_TO_BITACORA_XML = "${System.getProperty("user.dir")}${File.separator}bitacora${File.separator}bitacora.xml"
 

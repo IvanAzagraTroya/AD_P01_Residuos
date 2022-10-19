@@ -8,6 +8,10 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlElementWrapper
 import javax.xml.bind.annotation.XmlRootElement
 
+/**
+ * @author Daniel Rodriguez Muñoz
+ * DTO de clase residuo en lista
+ */
 @XmlRootElement(name="residuos")
 @XmlAccessorType(XmlAccessType.FIELD)
 class ResiduosListDTO() {

@@ -1,5 +1,9 @@
 package model
 
+/**
+ * @author Iván Azagra Troya
+ * Enumerador de los tipos de residuo que pueden haber
+ */
 enum class TipoResiduo(tipo: String) {
     RESTO("Restos"),
     ENVASES("Envases"),

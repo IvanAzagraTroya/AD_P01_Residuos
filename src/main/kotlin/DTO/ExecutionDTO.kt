@@ -2,6 +2,10 @@ package DTO
 
 import util.Util
 
+/**
+ * @author Daniel Rodriguez Muñoz
+ * DTO de Ejecucion
+ */
 class ExecutionDTO(
     val distrito: String? = "Madrid",
     val contenedoresDistrito: Map<String, Int>,
