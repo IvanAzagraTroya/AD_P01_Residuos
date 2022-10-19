@@ -1,0 +1,16 @@
+body {
+    background-image: url(peakpx.jpg);
+    color: #FFFFFF;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#nombres {
+    float:left;
+}
+
+#fecha {
+    text-align: right;
+    padding-left: 20%;
+    float:right
+}
