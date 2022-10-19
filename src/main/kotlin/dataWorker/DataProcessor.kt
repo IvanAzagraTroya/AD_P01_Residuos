@@ -11,8 +11,15 @@ import model.Contenedor
 import model.Residuos
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.html
+import util.Util
+import java.awt.Desktop
 import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.nio.file.Paths
+import java.util.*
 import kotlin.math.roundToInt
+import kotlin.system.exitProcess
 
 /**
  * @author Iván Azagra Troya
@@ -21,7 +28,7 @@ import kotlin.math.roundToInt
  * @param residuoData lista de residuos obtenida desde el lector del csv
  */
 
-class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<Residuos>) {
+class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<Residuos>, val initialExecutionTimeMillis: Long, val distrito: String?, destinationDirectory: String) {
     private val dir: String = System.getProperty("user.dir")
     private val imagesPath = File(dir+File.separator+"graphics"+File.separator)
     private val contDataframe = contenedorData.toDataFrame()
@@ -33,6 +40,17 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     lateinit var sumaRecogidoDistrito: String
     lateinit var cantidadTipoRecogido: String
 
+    init{
+        dataToDataFrame()
+        graphics()
+        graphicsDistrito()
+
+        if (distrito == null) {
+            generateHTML(generateSummary(),destinationDirectory,false)
+        } else {
+            generateHTML(generateDistrictSummary(),destinationDirectory,true)
+        }
+    }
 
     fun dataToDataFrame() {
         if(!imagesPath.exists())
@@ -197,14 +215,14 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     </p>
                     <h4>Suma de todo lo recogido en un año por distrito $sumaRecogidoDistrito </h4>
                     <h4>Cantidad de cada tipo de residuo recogida por distrito</h4>
-                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${executionDTO.tiempoGeneracion}</i></p>
+                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
                 </div>
                 <!-- los id son para definirlos en la misma línea del html generado a través del css3-->
                 <div id="nombres">
                     <strong>Iván Azagra y Daniel Rodríguez</strong>
                 </div>
                 <div id="fecha">
-                    ${executionDTO.fechaGeneracion}
+                    ${Util.getCurrentDateTimeSpanishFormat()}
                 </div>
             </body>
             </html>
@@ -224,7 +242,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
             </head>
             <body>
                 <!--Archivo "Resumen_distrito"-->
-                <h1 align="center" >Historial de recogida de basura y reciclaje</h1>
+                <h1 align="center" >Historial de recogida de basura y reciclaje en ${distrito}</h1>
                 <br>
                 <div id="contenedor">
                     <h5>Contenedores por tipo: </h5>
@@ -252,7 +270,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                             <img src= "./graphics/Max-Min-Media-Desviacion-Distrito.png"/>
                         </p>
                     </p>
-                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${executionDTO.tiempoGeneracion}</i></p>
+                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
                 </div>
                 <br>
                 <!-- los id son para definirlos en la misma línea del html generado a través del css3-->
@@ -260,7 +278,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     <strong>Iván Azagra y Daniel Rodríguez</strong>
                 </div>
                 <div id="fecha">
-                    ${executionDTO.fechaGeneracion}
+                    ${Util.getCurrentDateTimeSpanishFormat()}
                 </div>
                 
                 
@@ -269,4 +287,41 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
         """.trimIndent()
     }
 
+    private fun generateHTML(generateSummary: String, destinationDirectory: String, filtered: Boolean) {
+        val processedPath = if (!filtered) {
+            Paths.get("${destinationDirectory}${File.separator}resumen.html")
+        } else {
+            Paths.get("${destinationDirectory}${File.separator}resumen_${distrito}.html")
+        }
+        val html = processedPath.toFile()
+        if (!html.exists()) {
+            try {
+                FileWriter(html).use { writer ->
+                    writer.write(generateSummary)
+                    Desktop.getDesktop().browse(processedPath.toUri())
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            println("${html.name} already exists, would you like to overwrite the file? [y/n]")
+            var answer = ""
+            while (!answer.equals("y", ignoreCase = true) &&
+                !answer.equals("n", ignoreCase = true)
+            ) {
+                answer = readLine().toString()
+            }
+            if (answer.equals("y", ignoreCase = true)) {
+                val deleted: Boolean = html.delete()
+                if (!deleted) {
+                    println("Unable to delete ${html.name}")
+                    exitProcess(1777)
+                } else {
+                    generateHTML(generateSummary, destinationDirectory, filtered)
+                }
+            } else {
+                exitProcess(1212)
+            }
+        }
+    }
 }
