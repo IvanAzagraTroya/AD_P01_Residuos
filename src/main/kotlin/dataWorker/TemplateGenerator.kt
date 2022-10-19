@@ -2,6 +2,11 @@ package dataWorker
 
 import DTO.ExecutionDTO
 
+/**
+ * @author Iván Azagra Troya y Daniel Rodríguez Muñoz
+ * Clase generadora del template en el que se muestran los datos
+ * @param executionDTO DTO utilizado para pasar los valores necesarios para rellenar el HTML
+ */
 class TemplateGenerator(private val executionDTO: ExecutionDTO) {
     fun generateSummary(): String {
         return """

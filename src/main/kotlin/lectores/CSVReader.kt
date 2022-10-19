@@ -14,11 +14,13 @@ object CSVReader {
     /**
      * @author Daniel Rodriguez
      * Este metodo coge el CSV de residuos y devuelve una lista no mutable de objetos Residuos
+     * @param csvName nombre del archivo csv
+     * @param delimiter tipo de delimitador que usa el csv
      */
     fun readCSVResiduos(csvName: String, delimiter: String) : List<Residuos> {
         val results = mutableListOf<Residuos>()
 
-        checkCSVResiduosIsValid(csvName, delimiter)
+        checkCSVResiduosIsValid(csvName)
 
         val lines = File(csvName).readLines().drop(1)
 
@@ -47,8 +49,9 @@ object CSVReader {
      * @author Daniel Rodriguez
      * Este metodo comprueba que el CSV cumpla con los requisitos necesarios para ser procesado
      * (existir, no estar vacio y que la cabecera sea correcta.)
+     * @param csvName nombre del archivo csv
      */
-    private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
+    private fun checkCSVResiduosIsValid(csvName: String) {
         val csvFile = File(csvName)
         if (!csvFile.exists()) {
             throw Exception("File ${csvFile.name} does not exist.")
@@ -61,42 +64,6 @@ object CSVReader {
         val cabecera = csvFile.readLines().firstOrNull()
             ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
 
-        /*
-        var arguments = noDoubleDelimiter(cabecera, delimiter).split(delimiter)
-
-        var allOK = true
-
-        for (index in arguments.indices) {
-            when (index) {
-                0 -> if (arguments[index].contentEquals("Año")) {
-                    allOK = false
-                }
-                1 -> if (arguments[index].contentEquals("Mes")) {
-                    allOK = false
-                }
-                2 -> if (arguments[index].contentEquals("Lote")) {
-                    allOK = false
-                }
-                3 -> if (arguments[index].contentEquals("Residuo")) {
-                    allOK = false
-                }
-                4 -> if (arguments[index].contentEquals("Distrito")) {
-                    allOK = false
-                }
-                5 -> if (arguments[index].contentEquals("Nombre Distrito")) {
-                    allOK = false
-                }
-                6 -> if (arguments[index].contentEquals("Toneladas")) {
-                    allOK = false
-                }
-                else -> allOK = false
-            }
-        }
-
-        if (!allOK) {
-            throw Exception("File ${csvFile.name} has an incorrect format.")
-        }
-        */
     }
 
     /**
@@ -122,10 +89,14 @@ object CSVReader {
         }
     }
 
+    /**
+     * @author Iván Azagra Troya
+     * método dedicado a leer el csv de contenedores
+     */
     fun readCSVContenedores(csvName: String, delimiter: String): List<Contenedor> {
         val results = mutableListOf<Contenedor>()
 
-        checkCSVContenedoresIsValid(csvName, delimiter)
+        checkCSVContenedoresIsValid(csvName)
 
         val lines = File(csvName).readLines().drop(1)
 
@@ -154,7 +125,12 @@ object CSVReader {
         return results
     }
 
-    private fun checkCSVContenedoresIsValid(csvName: String, delimiter: String) {
+    /**
+     * @author Daniel Rodriguez Muñoz
+     * @param csvName nombre del archivo csv
+     * Comprueba que el csv sea válido
+     */
+    private fun checkCSVContenedoresIsValid(csvName: String) {
         val csvFile = File(csvName)
         if (!csvFile.exists()) {
             throw Exception("File ${csvFile.name} does not exist.")
@@ -167,89 +143,12 @@ object CSVReader {
         val cabecera = csvFile.readLines().firstOrNull()
             ?: throw Exception("File ${csvFile.name} is empty. Use a valid CSV file.")
 
-        /*
-        val arguments = noDoubleDelimiter(cabecera,delimiter).split(delimiter)
-        var allOK = true
-
-        for (index in arguments.indices) {
-            when (index) {
-                0 -> if (arguments[index].contentEquals("Código Interno del Situad")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                1 -> if (arguments[index].contentEquals("Tipo Contenedor")) {
-                    println("falla en [$index]")
-                    println("esperado: Tipo Contenedor")
-                    println("recibido: ${arguments[index]}")
-                    allOK = false
-                }
-                2 -> if (arguments[index].contentEquals("Modelo")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                3 -> if (arguments[index].contentEquals("Descripcion Modelo")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                4 -> if (arguments[index].contentEquals("Cantidad")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                5 -> if (arguments[index].contentEquals("Lote")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                6 -> if (arguments[index].contentEquals("Distrito")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                7 -> if (arguments[index].contentEquals("Barrio")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                8 -> if (arguments[index].contentEquals("Tipo Vía")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                9 -> if (arguments[index].contentEquals("Nombre")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                10 -> if (arguments[index].contentEquals("Número")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                11 -> if (arguments[index].contentEquals("COORDENADA X")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                12 -> if (arguments[index].contentEquals("COORDENADA Y")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                13 -> if (arguments[index].contentEquals("LONGITUD")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                14 -> if (arguments[index].contentEquals("LATITUD")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                15 -> if (arguments[index].contentEquals("DIRECCION")) {
-                    println("falla en [$index]")
-                    allOK = false
-                }
-                else -> allOK = false
-            }
-        }
-
-        if (!allOK) {
-            throw Exception("File ${csvFile.name} has an incorrect format.")
-        }
-
-         */
     }
 
+    /**
+     * @author Iván Azagra Troya
+     * Parseador de tipos de contenedor para el lector
+     */
     fun parseTipoContenedor(c: String): TipoContenedor {
         return when (c) {
             "ORGANICA" -> TipoContenedor.ORGANICA
@@ -260,6 +159,10 @@ object CSVReader {
         }
     }
 
+    /**
+     * @author Daniel Rodriguez Muñoz
+     * Método que limita los dobles delimitadores para evitar fallos al leer
+     */
     fun noDoubleDelimiter(x: String, delimiter: String) : String {
         var result = x
         while (result.contains("${delimiter}${delimiter}") || result.endsWith(delimiter)) {

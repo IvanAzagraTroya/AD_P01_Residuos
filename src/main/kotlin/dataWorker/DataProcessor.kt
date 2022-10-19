@@ -16,6 +16,8 @@ import kotlin.math.roundToInt
 /**
  * @author Iván Azagra Troya
  * Clase encargada de procesar los datos de los csv con Dataframes
+ * @param contenedorData lista de contenedores obtenida desde el lector del csv
+ * @param residuoData lista de residuos obtenida desde el lector del csv
  */
 
 class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<Residuos>) {

@@ -6,6 +6,10 @@ import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlAttribute
 import javax.xml.bind.annotation.XmlRootElement
 
+/**
+ * @author Iván Azagra y Daniel Rodriguez
+ * Clase KOJO de los residuos
+ */
 @XmlRootElement(name = "residuos_data")
 @XmlAccessorType(XmlAccessType.FIELD)
 @DataSchema

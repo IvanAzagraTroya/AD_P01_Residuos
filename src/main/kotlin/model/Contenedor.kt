@@ -6,6 +6,10 @@ import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlRootElement
 
+/**
+ * @author Iván Azagra Troya y Daniel Rodriguez
+ * Clase KOJO de Contenedores
+ */
 @Serializable
 @XmlRootElement(name = "contenedor_data")
 @XmlAccessorType(XmlAccessType.FIELD)

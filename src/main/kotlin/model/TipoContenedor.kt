@@ -1,5 +1,9 @@
 package model
 
+/**
+ * @author Iván Azagra Troya
+ * Enumerador con los tipos de contenedores que pueden haber
+ */
 enum class TipoContenedor(tipo: String) {
     ORGANICA("ORGANICA"),
     RESTO("RESTO"),

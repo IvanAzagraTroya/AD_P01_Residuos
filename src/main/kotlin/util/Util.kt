@@ -5,6 +5,10 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
+/**
+ * @author Daniel Rodriguez Muñoz
+ * Clase util thread safe que obtiene el tiempo de ejecución y la fecha en formato español
+ */
 object Util {
     fun getCurrentInstantForExecution(): String {
         val instanteEjecucion: LocalDateTime = LocalDateTime.now()
