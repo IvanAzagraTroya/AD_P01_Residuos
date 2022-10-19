@@ -117,10 +117,7 @@ fun main(args: Array<String>) {
         val listResiduos = CSVReader.readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
         val listContenedores = CSVReader.readCSVContenedores("${args[1]}${File.separator}contenedores_varios.csv", ";")
 
-        val processor = DataProcessor(listContenedores, listResiduos)
-        //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
-        // yo te dejo creadas aqui las listas de objetos que necesitas.
-        // Este es el metodo para cuando se quiere un HTML ***SIN FILTRAR POR CIUDAD***
+        val processor = DataProcessor(listContenedores, listResiduos, inicioEjecucion, null, args[2])
     }
 
     //if (pruebaArgs.size == 4) {
@@ -141,9 +138,6 @@ fun main(args: Array<String>) {
             exitProcess(6)
         }
 
-        val processor = DataProcessor(filteredContenedoresList, filteredResiduosList)
-        //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,
-        // yo te dejo creadas aqui las listas de objetos que necesitas ya filtradas por distrito. Usa las filteredLists.
-        // Este es el metodo para cuando se quiere un HTML ***FILTRADO PARA UNA CIUDAD ESPECIFICA***
+        val processor = DataProcessor(filteredContenedoresList, filteredResiduosList, inicioEjecucion, args[1], args[3])
     }
 }
