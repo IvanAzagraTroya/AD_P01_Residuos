@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement
 
 /**
  * @author Daniel Rodriguez Muñoz
- * Clase KOJO para el objeto de la ejecución
+ * Clase POKO para el objeto de la ejecución
  */
 @XmlRootElement(name = "execution_data")
 @XmlAccessorType(XmlAccessType.FIELD)

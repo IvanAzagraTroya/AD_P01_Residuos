@@ -17,7 +17,6 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     implementation("org.jvnet.jaxb2.maven2:maven-jaxb2-plugin:0.15.1")
 
     // Dataframes
