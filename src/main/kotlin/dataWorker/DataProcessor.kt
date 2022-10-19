@@ -98,7 +98,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphicsDistrito() {
-        var d = residuoDataframe.groupBy("nombreDistrito", "mes")
+        var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
             .aggregate {
                 max("toneladas") into "Max toneladas"
                 min("toneladas") into "Min toneladas"
