@@ -10,6 +10,7 @@ import jetbrains.letsPlot.letsPlot
 import model.Contenedor
 import model.Residuos
 import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.io.html
 import java.io.File
 import kotlin.math.roundToInt
 
@@ -41,7 +42,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
         val mediaToneladasAnuales = residuoDataframe.groupBy("year", "nombreDistrito", "tipoResiduo")
             .aggregate {
                 mean("toneladas").roundToInt() into "Media de toneladas anuales por distrito"
-            }
+            }.html()
 
         val MaxMinMeanStd = residuoDataframe.groupBy("nombreDistrito","toneladas", "tipoResiduo", "year")
             .aggregate {
@@ -49,17 +50,17 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 min("toneladas") into "Min toneladas"
                 mean("toneladas").roundToInt() into "Media toneladas"
                 std("toneladas") into "Desviacion toneladas"
-            }.sortBy("nombreDistrito")
+            }.sortBy("nombreDistrito").html()
 
         val sumaRecogidoDistrito = residuoDataframe.groupBy("nombreDistrito","toneladas", "year")
             .aggregate {
                 sum("toneladas") into "Suma de toneladas recogidas"
-            }
+            }.html()
 
         val cantidadTipoRecogido = residuoDataframe.groupBy("nombreDistrito","tipoResiduo")
             .aggregate{
                 sum("toneladas") into "Cantidad de toneladas"
-            }.print()
+            }.html()
     }
 
     fun graphics() {
