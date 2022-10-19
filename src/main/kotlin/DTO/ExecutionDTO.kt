@@ -3,17 +3,16 @@ package DTO
 import util.Util
 
 class ExecutionDTO(
-    val distrito: String = "C. Madrid",
-    val contenedoresDistrito: Int,
+    val distrito: String? = "Madrid",
+    val contenedoresDistrito: Map<String, Int>,
     val toneladasDistritoResiduoTotales: Int,
     val maximoResiduos: String,
     val minimoResiduos: String,
     val mediaResiduos: String,
     val desviaciónResiduos: String,
 
-    val mediaContenedoresTipo: Int,
-    val mediaContenedoresDistrito: Int,
-    val mediaToneladasAnuales: String,
+    val mediaContenedoresDistrito: Map<String, Int>,
+    val mediaToneladasAnuales: Int,
     val recogidaDistrito: String,
     val tipoResiduoDistrito: String,
     val maximo: String,

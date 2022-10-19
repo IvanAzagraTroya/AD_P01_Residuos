@@ -18,7 +18,7 @@ object CSVReader {
     fun readCSVResiduos(csvName: String, delimiter: String) : List<Residuos> {
         val results = mutableListOf<Residuos>()
 
-        checkCSVResiduosIsValid(csvName, delimiter)
+        checkCSVResiduosIsValid(csvName)
 
         val lines = File(csvName).readLines().drop(1)
 
@@ -48,7 +48,7 @@ object CSVReader {
      * Este metodo comprueba que el CSV cumpla con los requisitos necesarios para ser procesado
      * (existir, no estar vacio y que la cabecera sea correcta.)
      */
-    private fun checkCSVResiduosIsValid(csvName: String, delimiter: String) {
+    private fun checkCSVResiduosIsValid(csvName: String) {
         val csvFile = File(csvName)
         if (!csvFile.exists()) {
             throw Exception("File ${csvFile.name} does not exist.")
