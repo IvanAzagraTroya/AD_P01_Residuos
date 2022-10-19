@@ -136,6 +136,10 @@ fun main(args: Array<String>) {
         val filteredContenedoresList: List<Contenedor> =
             //listContenedores.stream().filter { x -> x.distrito.uppercase() == pruebaArgs[1].uppercase() }.toList()
             listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
+        if (filteredResiduosList.isEmpty() || filteredContenedoresList.isEmpty()) {
+            println("District [${args[1]}] does not exist or there is no data related to it. Please select an existent district")
+            exitProcess(6)
+        }
 
         val processor = DataProcessor(filteredContenedoresList, filteredResiduosList)
         //TODO: Iván, aquí llama a las clases que tengas que llamar para poner en funcionamiento tu parte,

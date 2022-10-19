@@ -211,7 +211,7 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
                 println("$destinationDirectoryPath is not a directory.")
                 exitProcess(1707)
             } else {
-                println("This directory already exists, do you want to overwrite it? [Y/N]")
+                println("This directory already exists, do you want to overwrite it? [y/n]")
                 var result = ""
                 while (!(result.contentEquals("y")) && !(result.contentEquals("n"))) {
                     result = readLine().toString()
