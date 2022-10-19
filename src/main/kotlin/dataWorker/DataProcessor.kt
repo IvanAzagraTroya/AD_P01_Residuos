@@ -35,7 +35,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
         residuoDataframe.schema().print()
 
         // Tipo de contenedor por distrito
-        val contenedoresDistrito = contDataframe.groupBy("tipoContenedor", "distrito").count()
+        val contenedoresDistrito = contDataframe.groupBy("tipoContenedor", "distrito").count().html()
 
         // Jose Luis te he fallado no sé cómo hacer la media de contenedores por distrito
 
