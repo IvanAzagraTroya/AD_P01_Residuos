@@ -63,7 +63,7 @@ class TemplateGenerator(private val executionDTO: ExecutionDTO, private val dest
     }
 
     private fun writeHTML(executionDTO: ExecutionDTO, pathToImages: Path, initialExecutionTimeMillis: Long, districtName: String?): String {
-        val result = """
+        var result = """
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -75,11 +75,19 @@ class TemplateGenerator(private val executionDTO: ExecutionDTO, private val dest
             </head>
             <body>
                 <h1 align="center">Resumen de recogidas de basura y reciclaje de ${executionDTO.distrito} </h1>
-
-                <br>
         """.trimIndent()
-        if (districtName == null) {
+        executionDTO.contenedoresDistrito.keys.forEach {
+            result = result.plus("""
+                <h2>Numero de contenedores de cada tipo en ${executionDTO.contenedoresDistrito[it]}</h2>
+            """.trimIndent())
+            
+        }
 
+
+        if (districtName == null) {
+            executionDTO.mediaContenedoresDistrito.forEach {
+
+            }
         }
 
         /*
