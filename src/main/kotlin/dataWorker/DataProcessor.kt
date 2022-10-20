@@ -4,6 +4,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.letsPlot.Stat.identity
 import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomBar
+import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
 import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.letsPlot
@@ -15,9 +16,7 @@ import util.Util
 import java.awt.Desktop
 import java.io.File
 import java.io.FileWriter
-import java.io.IOException
 import java.nio.file.Paths
-import java.util.*
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess
 
@@ -40,13 +39,16 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     lateinit var sumaRecogidoDistrito: String
     lateinit var cantidadTipoRecogido: String
 
+    /*variable de dirección del css de la web*/
+    var css: String = "src/main/resources/templates/style.css"
+
     init{
         dataToDataFrame()
         graphics()
-        graphicsDistrito()
+//        graphicsDistrito()
 
         if (distrito == null) {
-            generateHTML(generateSummary(),destinationDirectory,false)
+            generateHTML(generateSummary(),dir+File.separator+"graphics",false)
         } else {
             generateHTML(generateDistrictSummary(),destinationDirectory,true)
         }
@@ -89,15 +91,14 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphics() {
-        var d = contDataframe.groupBy("distrito").count().toMap()
+        var d = contDataframe.groupBy("distrito", "tipoContenedor").count().toMap()
         val gTotalContenedores: Plot = letsPlot(data = d) + geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            alpha = 0.4,
+            fill = Color.BLUE
         ) {
             x = "distrito"
-            y = "contendores"
+            y = "count"
         } + labs(
             x = "distrito",
             y = "contendores por distrito",
@@ -112,10 +113,9 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
             stat = identity,
             alpha = 0.8,
             fill = Color.CYAN,
-            color = Color.DARK_BLUE
         ) {
             x = "mes"
-            y = "toneladas"
+            y = "media de toneladas mensuales"
         } + labs(
             x = "mes",
             y = "toneladas",
@@ -134,14 +134,34 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
             }.toMap()
 
-        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomBar(
+        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomPoint(
             stat = identity,
             alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            fill = Color.CYAN
         ) {
             x = "mes"
-            y = "toneladas"
+            y = "Max toneladas"
+        } +geomPoint(
+            stat = identity,
+            alpha = 0.8,
+            fill = Color.DARK_BLUE
+        ){
+            x = "mes"
+            y = "Min toneladas"
+        } +geomPoint(
+            stat = identity,
+            alpha = 0.8,
+            fill = Color.DARK_GREEN
+        ) {
+            x = "mes"
+            y = "Media toneladas"
+        } +geomPoint(
+            stat = identity,
+            alpha = 0.8,
+            fill = Color.GREEN
+        ){
+            x = "mes"
+            y = "Desviacion toneladas"
         } + labs(
             x = "mes",
             y = "toneladas",
@@ -156,20 +176,25 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
 
         val gTotalToneladas:Plot = letsPlot(data = d2) + geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            alpha = 0.3,
+            fill = Color.CYAN
         ) {
-            x = "distrito"
-            y = "toneladas"
-        } + labs(
+            x = "nombreDistrito"
+            y = "Total de toneladas por residuo"
+        }  +geomPoint(
+            stat = identity,
+            alpha = 0.6,
+            fill = Color.DARK_BLUE
+        ) {
+            x = "nombreDistrito"
+            y = "tipoResiduo"
+        }+ labs(
             x = "distrito",
             y = "toneladas",
             title = "Toneladas totales por tipo de residuo"
         )
-        ggsave(gMaxMinMeanStd, "Toneladas-Totales-Tipo-Residuo.png", 1, 2, imagesPath.toString())
+        ggsave(gTotalToneladas, "Toneladas-Totales-Tipo-Residuo.png", 1, 2, imagesPath.toString())
     }
-
     fun generateSummary(): String {
         return """
             <!DOCTYPE html>
@@ -178,7 +203,30 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="style.css">
+                <link rel="stylesheet" href="$css">
+                
+                <style type="text/css">
+                <!--
+                body {
+                    background-image: url(peakpx.jpg);
+                    color: #FFFFFF;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                }
+
+                #nombres {
+                    float:left;
+                }
+
+                #fecha {
+                    text-align: right;
+                    padding-left: 20%;
+                    float:right
+                }
+                
+                -->
+                </style>
+                
                 <title>Práctica Acceso a Datos 01</title>
             </head>
             <body>
@@ -193,7 +241,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     <p>
                         <h4>Contenedores totales por distrito</h4>
                     <p> 
-                        <img src= "./graphics/Contenedores-Por-Distrito.png"/>
+                        <img src= "Contenedores-Por-Distrito.png""/>
                     </p>
 
                     </p>
@@ -203,7 +251,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     <p>
                         <h4>Media de las toneladas mensuales de recogida por distrito</h4>
                         <p> 
-                        <img src= "./graphics/Media-Toneladas-Mensuales-Distrito.png"/>
+                        <img src= "Media-Toneladas-Mensuales-Distrito.png">
                     </p>
 
                     </p>
@@ -219,10 +267,11 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 </div>
                 <!-- los id son para definirlos en la misma línea del html generado a través del css3-->
                 <div id="nombres">
-                    <strong>Iván Azagra y Daniel Rodríguez</strong>
+                    <strong>Autores: Iván Azagra y Daniel Rodríguez</strong>
                 </div>
                 <div id="fecha">
-                    ${Util.getCurrentDateTimeSpanishFormat()}
+                   <strong> <!--{/*Util.getCurrentDateTimeSpanishFormat*/}--></strong>
+                    aquí va la fecha
                 </div>
             </body>
             </html>
@@ -301,7 +350,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     Desktop.getDesktop().browse(processedPath.toUri())
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("Error al crear el Html: ${e.message}")
             }
         } else {
             println("${html.name} already exists, would you like to overwrite the file? [y/n]")
