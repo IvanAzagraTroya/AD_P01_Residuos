@@ -6,11 +6,13 @@ body {
 }
 
 #nombres {
+    color:black;
     float:left;
 }
 
 #fecha {
     text-align: right;
     padding-left: 20%;
-    float:right
+    float:right;
+    color: black;
 }

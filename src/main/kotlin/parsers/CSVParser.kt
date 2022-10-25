@@ -238,7 +238,6 @@ class CSVParser(private val originalDirectory: String, private val destinationDi
             }
         } else {
             destinationDirectory.mkdirs()
-            //destinationDirectory.setWritable(true)
         }
     }
 }

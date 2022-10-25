@@ -19,7 +19,7 @@ object Util {
     fun getCurrentDateTimeSpanishFormat(): String {
         val instanteEjecucion: LocalDateTime = LocalDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter
-            .ofLocalizedDateTime(FormatStyle.FULL)
+            .ofLocalizedDateTime(FormatStyle.MEDIUM)
             .withLocale(Locale("es", "ES"))
         return formatter.format(instanteEjecucion)
     }
