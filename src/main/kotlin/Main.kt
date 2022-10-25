@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     val inicioEjecucion = System.currentTimeMillis()
     var currentExecution: Ejecucion
 
-    val pruebaArgs = arrayOf("resumen",
+    val pruebaArgs = arrayOf("resumen", /*"villaverde",*/
         "${System.getProperty("user.dir")}${File.separator}data",
         "${System.getProperty("user.dir")}${File.separator}data2")
 
@@ -118,7 +118,10 @@ fun main(args: Array<String>) {
 //        val listResiduos = CSVReader.readCSVResiduos("${args[1]}${File.separator}modelo_residuos_2021.csv", ";")
 //        val listContenedores = CSVReader.readCSVContenedores("${args[1]}${File.separator}contenedores_varios.csv", ";")
 
-        val processor = DataProcessor(listContenedores, listResiduos, inicioEjecucion, null, pruebaArgs[0])
+        //val processor = DataProcessor(listContenedores, listResiduos, inicioEjecucion, null, args[2])
+        val processor = DataProcessor(listContenedores, listResiduos, inicioEjecucion, null, pruebaArgs[2])
+        currentExecution = Ejecucion("resumen_global", inicioEjecucion, true)
+        BitacoraCreator.saveIntoBitacora(currentExecution)
     }
 
     if (pruebaArgs.size == 4) {
@@ -135,10 +138,16 @@ fun main(args: Array<String>) {
             listContenedores.stream().filter { x -> x.distrito.uppercase() == pruebaArgs[1].uppercase() }.toList()
 //            listContenedores.stream().filter { x -> x.distrito.uppercase() == args[1].uppercase() }.toList()
         if (filteredResiduosList.isEmpty() || filteredContenedoresList.isEmpty()) {
-            println("District [${args[1]}] does not exist or there is no data related to it. Please select an existent district")
+            //println("District [${args[1]}] does not exist or there is no data related to it. Please select an existent district")
+            println("District [${pruebaArgs[1]}] does not exist or there is no data related to it. Please select an existent district")
+            currentExecution = Ejecucion("resumen", inicioEjecucion, false)
+            BitacoraCreator.saveIntoBitacora(currentExecution)
             exitProcess(6)
         }
 
-        val processor = DataProcessor(filteredContenedoresList, filteredResiduosList, inicioEjecucion, args[1], args[3])
+        //val processor = DataProcessor(filteredContenedoresList, filteredResiduosList, inicioEjecucion, args[1], args[3])
+        val processor = DataProcessor(filteredContenedoresList, filteredResiduosList, inicioEjecucion, pruebaArgs[1], pruebaArgs[3])
+        currentExecution = Ejecucion("resumen", inicioEjecucion, true)
+        BitacoraCreator.saveIntoBitacora(currentExecution)
     }
 }
