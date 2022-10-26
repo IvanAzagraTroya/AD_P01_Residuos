@@ -206,30 +206,9 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="$css">
+                <link rel="stylesheet" href="$css"/>
                 
-                <style type="text/css">
-                <!--
-                body {
-                    background-image: url(peakpx.jpg);
-                    color: #FFFFFF;
-                    background-size: cover;
-                    background-repeat: no-repeat;
-                }
-
-                #nombres {
-                    float:left;
-                }
-
-                #fecha {
-                    text-align: right;
-                    padding-left: 20%;
-                    float:right
-                    color: black;
-                }
-                
-                -->
-                </style>
+                <style type="text/css"/>
                 
                 <title>Práctica Acceso a Datos 01</title>
             </head>
@@ -289,9 +268,9 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="$css">
+                <link rel="stylesheet" href="$css"/>
                 
-                <style type="text/css">
+                <style type="text/css"/>
                 <title>Práctica Acceso a Datos 01</title>
             </head>
             <body>
