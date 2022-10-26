@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     val inicioEjecucion = System.currentTimeMillis()
     var currentExecution: Ejecucion
 
-    val pruebaArgs = arrayOf("resumen", /*"villaverde",*/
+    val pruebaArgs = arrayOf("resumen", "centro",
         "${System.getProperty("user.dir")}${File.separator}data",
         "${System.getProperty("user.dir")}${File.separator}data2")
 
