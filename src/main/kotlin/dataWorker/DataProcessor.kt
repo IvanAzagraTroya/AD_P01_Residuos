@@ -4,7 +4,6 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.letsPlot.Stat.identity
 import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomBar
-import jetbrains.letsPlot.geom.geomPoint
 import jetbrains.letsPlot.intern.Plot
 import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.letsPlot
@@ -129,6 +128,57 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphicsDistrito() {
+        /*var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
+            .aggregate {
+                max("toneladas") into "Max toneladas"
+                min("toneladas") into "Min toneladas"
+                mean("toneladas") into "Media toneladas"
+                std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
+            }.toMap()
+
+        val gMax:Plot = letsPlot(data = d) + geomBar(
+            color = Color.CYAN,
+            alpha = 0.3,
+            fill = Color.CYAN
+        ) {
+            x = "mes"
+            y = "Max toneladas"
+        } + labs(
+            x = "mes",
+            y = "toneladas",
+            title = "Maximo residuos",
+        )
+
+        val gMin: Plot = letsPlot(data = d) +geomBar(
+            color = Color.DARK_BLUE,
+            alpha = 0.3,
+            fill = Color.DARK_BLUE
+        ){
+            x = "mes"
+            y = "Min toneladas"
+        } + labs(
+            x = "mes",
+            y = "toneladas",
+            title = "Mínimo de residuos",
+        )
+
+        val gMean: Plot = letsPlot(data = d)  +geomBar(
+            color = Color.DARK_GREEN,
+            alpha = 0.3,
+            fill = Color.DARK_GREEN
+        ) {
+            x = "mes"
+            y = "Media toneladas"
+        } + labs(
+            x = "mes",
+            y = "toneladas",
+            title = "Media de residuos",
+        )
+
+        ggsave(gMax, "Max-Distrito.png", 1, null, imagesPath.toString())
+        ggsave(gMin, "Min-Distrito.png", 1, null, imagesPath.toString())
+        ggsave(gMean, "Media-Distrito.png", 1, null, imagesPath.toString())*/
+
         var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
             .aggregate {
                 max("toneladas") into "Max toneladas"
@@ -137,31 +187,31 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
             }.toMap()
 
-        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomPoint(
+        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomBar(
             stat = identity,
             alpha = 0.8,
             fill = Color.CYAN
         ) {
             x = "mes"
             y = "Max toneladas"
-        } +geomPoint(
+        } +geomBar(
             stat = identity,
             alpha = 0.8,
             fill = Color.DARK_BLUE
         ){
             x = "mes"
             y = "Min toneladas"
-        } +geomPoint(
+        } +geomBar(
             stat = identity,
             alpha = 0.8,
-            fill = Color.DARK_GREEN
+            fill = Color.VERY_LIGHT_GRAY
         ) {
             x = "mes"
             y = "Media toneladas"
-        } +geomPoint(
+        } + geomBar(
             stat = identity,
             alpha = 0.8,
-            fill = Color.GREEN
+            fill = Color.GRAY
         ){
             x = "mes"
             y = "Desviacion toneladas"
@@ -182,21 +232,21 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
             alpha = 0.3,
             fill = Color.CYAN
         ) {
-            x = "nombreDistrito"
+            x = "tipoResiduo"
             y = "Total de toneladas por residuo"
-        }  +geomPoint(
+        }  +geomBar(
             stat = identity,
-            alpha = 0.6,
+            alpha = 0.3,
             fill = Color.DARK_BLUE
         ) {
-            x = "nombreDistrito"
-            y = "tipoResiduo"
+            x = "tipoResiduo"
+            y = "toneladas"
         }+ labs(
-            x = "distrito",
+            x = "tipo de residuo",
             y = "toneladas",
             title = "Toneladas totales por tipo de residuo"
         )
-        ggsave(gTotalToneladas, "Toneladas-Totales-Tipo-Residuo.png", 1, 2, imagesPath.toString())
+        ggsave(gTotalToneladas, "Toneladas-Totales-Tipo-Residuo.png", 1, 1, imagesPath.toString())
     }
     private fun generateSummary(): String {
         return """
@@ -283,7 +333,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
 
                     <br>
                     <h5>Toneladas de residuo totales recogidas</h5>
-                    <p>(inserte $sumaRecogidoDistrito)</p>
+                    <p>$sumaRecogidoDistrito)</p>
 
                     <p>
                         <h4>Toneladas totales de residuo recogidas</h4>
@@ -300,7 +350,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 
                         <h4>Máximo, mínimo y media por meses</h4>
                         <p>
-                            <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Max-Min-Media-Desviacion-Distrito.png"/>
+                        <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Max-Min-Media-Desviacion-Distrito.png"/>
                         </p>
                     </p>
                     <p align="right" id="fecha">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
