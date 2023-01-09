@@ -1,6 +1,7 @@
 package dataWorker
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.Stat.identity
 import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomBar
@@ -40,10 +41,16 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     lateinit var sumaRecogidoDistrito: String
     lateinit var cantidadTipoRecogido: String
 
+    /*variable de dirección del css de la web*/
+    var css: String = "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}style.css"
+
     init{
         dataToDataFrame()
-        graphics()
-        graphicsDistrito()
+        if (distrito == null) {
+            graphics()
+        } else {
+            graphicsDistrito()
+        }
 
         if (distrito == null) {
             generateHTML(generateSummary(),destinationDirectory,false)
@@ -89,15 +96,14 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphics() {
-        var d = contDataframe.groupBy("distrito").count().toMap()
+        var d = contDataframe.groupBy("distrito", "tipoContenedor").count().toMap()
         val gTotalContenedores: Plot = letsPlot(data = d) + geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            alpha = 0.4,
+            fill = Color.BLUE
         ) {
             x = "distrito"
-            y = "contendores"
+            y = "count"
         } + labs(
             x = "distrito",
             y = "contendores por distrito",
@@ -112,10 +118,9 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
             stat = identity,
             alpha = 0.8,
             fill = Color.CYAN,
-            color = Color.DARK_BLUE
         ) {
             x = "mes"
-            y = "toneladas"
+            y = "media de toneladas mensuales"
         } + labs(
             x = "mes",
             y = "toneladas",
@@ -126,28 +131,41 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphicsDistrito() {
-        var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
+        val d = residuoDataframe.groupBy("mes")
             .aggregate {
                 max("toneladas") into "Max toneladas"
                 min("toneladas") into "Min toneladas"
                 mean("toneladas") into "Media toneladas"
                 std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
             }.toMap()
-
-        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomBar(
+        val gMaxMinMeanStd = letsPlot(data = d) + geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            alpha = 1,
+            fill = Color.GREEN
         ) {
             x = "mes"
-            y = "toneladas"
+            y = "Max toneladas"
+        }+ geomBar(
+            stat = identity,
+            alpha = 0.8,
+            fill = Color.RED
+        ) {
+            x = "mes"
+            y = "Min toneladas"
+        } +geomBar(
+            stat = identity,
+            alpha = 0.9,
+            fill = Color.BLUE
+        ) {
+            x = "mes"
+            y = "Media toneladas"
         } + labs(
             x = "mes",
             y = "toneladas",
             title = "Maximo, minimo y media de residuos"
         )
-        ggsave(gMaxMinMeanStd, "Max-Min-Media-Desviacion-Distrito.png", 1, 2, imagesPath.toString())
+
+        ggsave(gMaxMinMeanStd, "Max-Min-Media-Desviacion-Distrito.png", path = imagesPath.toString())
 
         var d2 = residuoDataframe.groupBy("nombreDistrito", "toneladas", "tipoResiduo")
             .aggregate {
@@ -156,21 +174,26 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
 
         val gTotalToneladas:Plot = letsPlot(data = d2) + geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.CYAN,
-            color = Color.DARK_BLUE
+            alpha = 0.3,
+            fill = Color.CYAN
         ) {
-            x = "distrito"
+            x = "tipoResiduo"
+            y = "Total de toneladas por residuo"
+        }  +geomBar(
+            stat = identity,
+            alpha = 0.3,
+            fill = Color.DARK_BLUE
+        ) {
+            x = "tipoResiduo"
             y = "toneladas"
-        } + labs(
-            x = "distrito",
+        }+ labs(
+            x = "tipo de residuo",
             y = "toneladas",
             title = "Toneladas totales por tipo de residuo"
         )
-        ggsave(gMaxMinMeanStd, "Toneladas-Totales-Tipo-Residuo.png", 1, 2, imagesPath.toString())
+        ggsave(gTotalToneladas, "Toneladas-Totales-Tipo-Residuo.png", 1, 1, imagesPath.toString())
     }
-
-    fun generateSummary(): String {
+    private fun generateSummary(): String {
         return """
             <!DOCTYPE html>
             <html lang="en">
@@ -178,7 +201,10 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="style.css">
+                <link rel="stylesheet" href="$css"/>
+                
+                <style type="text/css"/>
+                
                 <title>Práctica Acceso a Datos 01</title>
             </head>
             <body>
@@ -193,7 +219,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     <p>
                         <h4>Contenedores totales por distrito</h4>
                     <p> 
-                        <img src= "./graphics/Contenedores-Por-Distrito.png"/>
+                        <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Contenedores-Por-Distrito.png"/>
                     </p>
 
                     </p>
@@ -203,7 +229,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     <p>
                         <h4>Media de las toneladas mensuales de recogida por distrito</h4>
                         <p> 
-                        <img src= "./graphics/Media-Toneladas-Mensuales-Distrito.png"/>
+                        <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Media-Toneladas-Mensuales-Distrito.png">
                     </p>
 
                     </p>
@@ -215,21 +241,21 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     </p>
                     <h4>Suma de todo lo recogido en un año por distrito $sumaRecogidoDistrito </h4>
                     <h4>Cantidad de cada tipo de residuo recogida por distrito</h4>
-                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
+                    <p id="fecha">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
                 </div>
                 <!-- los id son para definirlos en la misma línea del html generado a través del css3-->
                 <div id="nombres">
-                    <strong>Iván Azagra y Daniel Rodríguez</strong>
+                    <strong>Autores: Iván Azagra y Daniel Rodríguez</strong>
                 </div>
                 <div id="fecha">
-                    ${Util.getCurrentDateTimeSpanishFormat()}
+                    <strong>${Util.getCurrentDateTimeSpanishFormat()}</strong>
                 </div>
             </body>
             </html>
         """.trimIndent()
     }
 
-    fun generateDistrictSummary(): String {
+    private fun generateDistrictSummary(): String {
         return """
             <!DOCTYPE html>
             <html lang="en">
@@ -237,7 +263,9 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="style.css">
+                <link rel="stylesheet" href="$css"/>
+                
+                <style type="text/css"/>
                 <title>Práctica Acceso a Datos 01</title>
             </head>
             <body>
@@ -250,12 +278,12 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
 
                     <br>
                     <h5>Toneladas de residuo totales recogidas</h5>
-                    <p>(inserte $sumaRecogidoDistrito)</p>
+                    <p>$sumaRecogidoDistrito)</p>
 
                     <p>
                         <h4>Toneladas totales de residuo recogidas</h4>
                         <p>
-                            <img src= "./graphics/Toneladas-Totales-Tipo-Residuo.png"/>
+                            <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Toneladas-Totales-Tipo-Residuo.png"/>
                         </p>
 
                     </p>
@@ -265,12 +293,12 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                         
                         
                 
-                        <h4>(_gráfico_)Máximo, mínimo y media por meses</h4>
+                        <h4>Máximo, mínimo y media por meses</h4>
                         <p>
-                            <img src= "./graphics/Max-Min-Media-Desviacion-Distrito.png"/>
+                        <img src= "${System.getProperty("user.dir")}${File.separator}graphics${File.separator}Max-Min-Media-Desviacion-Distrito.png"/>
                         </p>
                     </p>
-                    <p align="right">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
+                    <p align="right" id="fecha">Tiempo de generación del mismo en milisegundos: <i>${(System.currentTimeMillis() - initialExecutionTimeMillis)}</i></p>
                 </div>
                 <br>
                 <!-- los id son para definirlos en la misma línea del html generado a través del css3-->
@@ -296,12 +324,20 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
         val html = processedPath.toFile()
         if (!html.exists()) {
             try {
+                val dDirectory = File(destinationDirectory)
+                if (!dDirectory.exists()) {
+                    dDirectory.mkdirs()
+                }
+                if (!dDirectory.isDirectory) {
+                    println("$destinationDirectory is not a directory.")
+                    exitProcess(1707)
+                }
                 FileWriter(html).use { writer ->
                     writer.write(generateSummary)
                     Desktop.getDesktop().browse(processedPath.toUri())
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("Error al crear el Html: ${e.message}")
             }
         } else {
             println("${html.name} already exists, would you like to overwrite the file? [y/n]")
@@ -320,7 +356,7 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
                     generateHTML(generateSummary, destinationDirectory, filtered)
                 }
             } else {
-                exitProcess(1212)
+                exitProcess(0)
             }
         }
     }
