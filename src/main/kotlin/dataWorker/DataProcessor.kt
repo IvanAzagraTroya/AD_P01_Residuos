@@ -1,6 +1,7 @@
 package dataWorker
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.Stat.identity
 import jetbrains.letsPlot.export.ggsave
 import jetbrains.letsPlot.geom.geomBar
@@ -15,7 +16,9 @@ import util.Util
 import java.awt.Desktop
 import java.io.File
 import java.io.FileWriter
+import java.io.IOException
 import java.nio.file.Paths
+import java.util.*
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess
 
@@ -128,99 +131,41 @@ class DataProcessor(val contenedorData: List<Contenedor>, val residuoData: List<
     }
 
     fun graphicsDistrito() {
-        /*var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
+        val d = residuoDataframe.groupBy("mes")
             .aggregate {
                 max("toneladas") into "Max toneladas"
                 min("toneladas") into "Min toneladas"
                 mean("toneladas") into "Media toneladas"
                 std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
             }.toMap()
-
-        val gMax:Plot = letsPlot(data = d) + geomBar(
-            color = Color.CYAN,
-            alpha = 0.3,
-            fill = Color.CYAN
+        val gMaxMinMeanStd = letsPlot(data = d) + geomBar(
+            stat = identity,
+            alpha = 1,
+            fill = Color.GREEN
         ) {
             x = "mes"
             y = "Max toneladas"
-        } + labs(
-            x = "mes",
-            y = "toneladas",
-            title = "Maximo residuos",
-        )
-
-        val gMin: Plot = letsPlot(data = d) +geomBar(
-            color = Color.DARK_BLUE,
-            alpha = 0.3,
-            fill = Color.DARK_BLUE
-        ){
-            x = "mes"
-            y = "Min toneladas"
-        } + labs(
-            x = "mes",
-            y = "toneladas",
-            title = "Mínimo de residuos",
-        )
-
-        val gMean: Plot = letsPlot(data = d)  +geomBar(
-            color = Color.DARK_GREEN,
-            alpha = 0.3,
-            fill = Color.DARK_GREEN
-        ) {
-            x = "mes"
-            y = "Media toneladas"
-        } + labs(
-            x = "mes",
-            y = "toneladas",
-            title = "Media de residuos",
-        )
-
-        ggsave(gMax, "Max-Distrito.png", 1, null, imagesPath.toString())
-        ggsave(gMin, "Min-Distrito.png", 1, null, imagesPath.toString())
-        ggsave(gMean, "Media-Distrito.png", 1, null, imagesPath.toString())*/
-
-        var d = residuoDataframe.groupBy("nombreDistrito", "mes", "tipoResiduo")
-            .aggregate {
-                max("toneladas") into "Max toneladas"
-                min("toneladas") into "Min toneladas"
-                mean("toneladas") into "Media toneladas"
-                std("toneladas") into "Desviacion toneladas" // Puede salir NaN por algún motivo
-            }.toMap()
-
-        val gMaxMinMeanStd:Plot = letsPlot(data = d) + geomBar(
+        }+ geomBar(
             stat = identity,
             alpha = 0.8,
-            fill = Color.CYAN
+            fill = Color.RED
         ) {
-            x = "mes"
-            y = "Max toneladas"
-        } +geomBar(
-            stat = identity,
-            alpha = 0.8,
-            fill = Color.DARK_BLUE
-        ){
             x = "mes"
             y = "Min toneladas"
         } +geomBar(
             stat = identity,
-            alpha = 0.8,
-            fill = Color.VERY_LIGHT_GRAY
+            alpha = 0.9,
+            fill = Color.BLUE
         ) {
             x = "mes"
             y = "Media toneladas"
-        } + geomBar(
-            stat = identity,
-            alpha = 0.8,
-            fill = Color.GRAY
-        ){
-            x = "mes"
-            y = "Desviacion toneladas"
         } + labs(
             x = "mes",
             y = "toneladas",
             title = "Maximo, minimo y media de residuos"
         )
-        ggsave(gMaxMinMeanStd, "Max-Min-Media-Desviacion-Distrito.png", 1, 2, imagesPath.toString())
+
+        ggsave(gMaxMinMeanStd, "Max-Min-Media-Desviacion-Distrito.png", path = imagesPath.toString())
 
         var d2 = residuoDataframe.groupBy("nombreDistrito", "toneladas", "tipoResiduo")
             .aggregate {
