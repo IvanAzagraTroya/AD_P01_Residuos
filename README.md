@@ -1,6 +1,6 @@
 # Aplicación para consulta del tratado de residuos en la Comunidad de Madrid
 
-![imagen](image\image.png)
+![imagen](https://github.com/IvanAzagraTroya/AD_P01_Residuos/blob/565387ac6bb8b997785c5fcd66c0c6bba3e7b161/image/image.png)
 
 ## Cómo ejecutar el programa
 
