@@ -17,3 +17,6 @@ En la carpeta de origen de datos deberán encontrarse los csv que se utilizan pa
 ## **¡Se necesitan ambos archivos para el correcto funcionamiento del programa!**
 
 El programa guardará un archivo de la ejecución del programa en caso exitoso o fallido, en él se podrá consultar el tiempo de ejecución, fecha de uso y tipo de opción ejecutada.
+
+## Vídeo
+https://drive.google.com/drive/folders/19wU_QZ5aV9zvI9L5xa4hUy-4gtF9rrLd?usp=share_link
